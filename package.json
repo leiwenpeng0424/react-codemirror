@@ -16,18 +16,19 @@
     "rollup": "^2.44.0",
     "rollup-plugin-css-chunks": "^2.0.3",
     "rollup-plugin-typescript2": "^0.30.0",
+    "ts-node": "^9.1.1",
     "typescript": "^4.2.3"
   },
   "peerDependencies": {
-    "codemirror": "^5.60.0",
-    "react": "^17.0.2"
+    "codemirror": "^5.60.0"
   },
   "prettier": {
     "semi": false,
     "printWidth": 70
   },
   "scripts": {
-    "build": "rollup -c && api-extractor run --local --verbose",
-    "dev": "rollup -cw"
+    "build": "rollup -c && yarn api",
+    "dev": "rollup -cw",
+    "api": "api-extractor run --local --verbose && ts-node ./scripts/api-extractor/cleanup-tsc-generated-dts.ts"
   }
 }
