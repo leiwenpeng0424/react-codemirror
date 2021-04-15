@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+
+    "alwaysStrict": true,
+    "jsx": "preserve",
+    "allowSyntheticDefaultImports": true,
+    "importHelpers": false,
+
+    "declaration": true,
+    "outDir": "dist",
+    "sourceMap": true,
+
+    // style
+    "noImplicitReturns": true
+  },
+  "include": ["src/*"]
+}
