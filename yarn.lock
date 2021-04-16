@@ -2,6 +2,234 @@
 # yarn lockfile v1
 
 
+"@codemirror/autocomplete@^0.18.0":
+  version "0.18.3"
+  resolved "https://registry.npm.taobao.org/@codemirror/autocomplete/download/@codemirror/autocomplete-0.18.3.tgz#6c75904c1156e4d9a00e56b9a3e559dda6149e1e"
+  integrity sha1-bHWQTBFW5NmgDla5o+VZ3aYUnh4=
+  dependencies:
+    "@codemirror/language" "^0.18.0"
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/text" "^0.18.0"
+    "@codemirror/tooltip" "^0.18.4"
+    "@codemirror/view" "^0.18.0"
+    lezer-tree "^0.13.0"
+
+"@codemirror/basic-setup@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.npm.taobao.org/@codemirror/basic-setup/download/@codemirror/basic-setup-0.18.0.tgz#721c50ca06581d9c31e45e2ccea5a280b4933a35"
+  integrity sha1-chxQygZYHZwx5F4szqWigLSTOjU=
+  dependencies:
+    "@codemirror/autocomplete" "^0.18.0"
+    "@codemirror/closebrackets" "^0.18.0"
+    "@codemirror/commands" "^0.18.0"
+    "@codemirror/comment" "^0.18.0"
+    "@codemirror/fold" "^0.18.0"
+    "@codemirror/gutter" "^0.18.0"
+    "@codemirror/highlight" "^0.18.0"
+    "@codemirror/history" "^0.18.0"
+    "@codemirror/language" "^0.18.0"
+    "@codemirror/lint" "^0.18.0"
+    "@codemirror/matchbrackets" "^0.18.0"
+    "@codemirror/rectangular-selection" "^0.18.0"
+    "@codemirror/search" "^0.18.0"
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
+
+"@codemirror/closebrackets@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.npm.taobao.org/@codemirror/closebrackets/download/@codemirror/closebrackets-0.18.0.tgz#4bd7e9227ed6e90e590fa6d289d34b0c065cb8cf"
+  integrity sha1-S9fpIn7W6Q5ZD6bSidNLDAZcuM8=
+  dependencies:
+    "@codemirror/language" "^0.18.0"
+    "@codemirror/rangeset" "^0.18.0"
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/text" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
+
+"@codemirror/commands@^0.18.0":
+  version "0.18.1"
+  resolved "https://registry.npm.taobao.org/@codemirror/commands/download/@codemirror/commands-0.18.1.tgz#2866a15936b7ab3ff30112eb1887a0e01fef6205"
+  integrity sha1-KGahWTa3qz/zARLrGIeg4B/vYgU=
+  dependencies:
+    "@codemirror/language" "^0.18.0"
+    "@codemirror/matchbrackets" "^0.18.0"
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/text" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
+    lezer-tree "^0.13.0"
+
+"@codemirror/comment@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.npm.taobao.org/@codemirror/comment/download/@codemirror/comment-0.18.0.tgz#f42e3baaacbeb57f22f4a3eabe5738b3d2bca1f7"
+  integrity sha1-9C47qqy+tX8i9KPqvlc4s9K8ofc=
+  dependencies:
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/text" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
+
+"@codemirror/fold@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.npm.taobao.org/@codemirror/fold/download/@codemirror/fold-0.18.0.tgz#40fc5195b997bf796f948cc3b4ce92e19b30999d"
+  integrity sha1-QPxRlbmXv3lvlIzDtM6S4ZswmZ0=
+  dependencies:
+    "@codemirror/gutter" "^0.18.0"
+    "@codemirror/language" "^0.18.0"
+    "@codemirror/rangeset" "^0.18.0"
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
+
+"@codemirror/gutter@^0.18.0":
+  version "0.18.1"
+  resolved "https://registry.npm.taobao.org/@codemirror/gutter/download/@codemirror/gutter-0.18.1.tgz#65657be98d8c7183d23c03038a32df22dd631cc2"
+  integrity sha1-ZWV76Y2McYPSPAMDijLfIt1jHMI=
+  dependencies:
+    "@codemirror/rangeset" "^0.18.0"
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
+
+"@codemirror/highlight@^0.18.0":
+  version "0.18.3"
+  resolved "https://registry.npm.taobao.org/@codemirror/highlight/download/@codemirror/highlight-0.18.3.tgz#50e268630f113c322a2dc97c9f68d71934fffcb0"
+  integrity sha1-UOJoYw8RPDIqLcl8n2jXGTT//LA=
+  dependencies:
+    "@codemirror/language" "^0.18.0"
+    "@codemirror/rangeset" "^0.18.0"
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
+    lezer-tree "^0.13.0"
+    style-mod "^4.0.0"
+
+"@codemirror/history@^0.18.0":
+  version "0.18.1"
+  resolved "https://registry.npm.taobao.org/@codemirror/history/download/@codemirror/history-0.18.1.tgz#853cde4b138b172235d58f945871f0fc08b7310a"
+  integrity sha1-hTzeSxOLFyI11Y+UWHHw/Ai3MQo=
+  dependencies:
+    "@codemirror/state" "^0.18.3"
+    "@codemirror/view" "^0.18.0"
+
+"@codemirror/lang-javascript@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.npm.taobao.org/@codemirror/lang-javascript/download/@codemirror/lang-javascript-0.18.0.tgz#e077b6601a076e1b4471c06ffc2b77dce8815c0e"
+  integrity sha1-4He2YBoHbhtEccBv/Ct33OiBXA4=
+  dependencies:
+    "@codemirror/autocomplete" "^0.18.0"
+    "@codemirror/highlight" "^0.18.0"
+    "@codemirror/language" "^0.18.0"
+    "@codemirror/lint" "^0.18.0"
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
+    lezer-javascript "^0.13.0"
+
+"@codemirror/lang-sql@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.npm.taobao.org/@codemirror/lang-sql/download/@codemirror/lang-sql-0.18.0.tgz#30bd5662267b0f59f69ac6d8694561c5f72cb670"
+  integrity sha1-ML1WYiZ7D1n2msbYaUVhxfcstnA=
+  dependencies:
+    "@codemirror/autocomplete" "^0.18.0"
+    "@codemirror/highlight" "^0.18.0"
+    "@codemirror/language" "^0.18.0"
+    "@codemirror/state" "^0.18.0"
+    lezer "^0.13.0"
+
+"@codemirror/language@^0.18.0":
+  version "0.18.1"
+  resolved "https://registry.npm.taobao.org/@codemirror/language/download/@codemirror/language-0.18.1.tgz#23682324228606c4ae5b6a9f7cd0a4b9fdff83dd"
+  integrity sha1-I2gjJCKGBsSuW2qffNCkuf3/g90=
+  dependencies:
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/text" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
+    lezer "^0.13.4"
+    lezer-tree "^0.13.0"
+
+"@codemirror/lint@^0.18.0":
+  version "0.18.1"
+  resolved "https://registry.npm.taobao.org/@codemirror/lint/download/@codemirror/lint-0.18.1.tgz#ef5502d3bc27eaf23c670fa888bd23d09b59af55"
+  integrity sha1-71UC07wn6vI8Zw+oiL0j0JtZr1U=
+  dependencies:
+    "@codemirror/panel" "^0.18.1"
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/tooltip" "^0.18.4"
+    "@codemirror/view" "^0.18.0"
+    crelt "^1.0.5"
+
+"@codemirror/matchbrackets@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.npm.taobao.org/@codemirror/matchbrackets/download/@codemirror/matchbrackets-0.18.0.tgz#64a493090d942de19f15a9ed3cb0fa19ed55f18b"
+  integrity sha1-ZKSTCQ2ULeGfFantPLD6Ge1V8Ys=
+  dependencies:
+    "@codemirror/language" "^0.18.0"
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
+    lezer-tree "^0.13.0"
+
+"@codemirror/panel@^0.18.1":
+  version "0.18.1"
+  resolved "https://registry.npm.taobao.org/@codemirror/panel/download/@codemirror/panel-0.18.1.tgz#b2179cdfb7d7c2913ba682d61d00edff160cfad0"
+  integrity sha1-shec37fXwpE7poLWHQDt/xYM+tA=
+  dependencies:
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
+
+"@codemirror/rangeset@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.npm.taobao.org/@codemirror/rangeset/download/@codemirror/rangeset-0.18.0.tgz#8b3bec00c1cee8c3db3827a752a76819ead2dfab"
+  integrity sha1-izvsAMHO6MPbOCenUqdoGerS36s=
+  dependencies:
+    "@codemirror/state" "^0.18.0"
+
+"@codemirror/rectangular-selection@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.npm.taobao.org/@codemirror/rectangular-selection/download/@codemirror/rectangular-selection-0.18.0.tgz#87e1a4d319b5d55b4e97294e6df0070164e836c0"
+  integrity sha1-h+Gk0xm11VtOlylObfAHAWToNsA=
+  dependencies:
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/text" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
+
+"@codemirror/search@^0.18.0":
+  version "0.18.2"
+  resolved "https://registry.npm.taobao.org/@codemirror/search/download/@codemirror/search-0.18.2.tgz#7f6311ce4d5749d92aefb41b2f8628d28d90918c"
+  integrity sha1-f2MRzk1XSdkq77QbL4Yo0o2QkYw=
+  dependencies:
+    "@codemirror/panel" "^0.18.1"
+    "@codemirror/rangeset" "^0.18.0"
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/text" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
+    crelt "^1.0.5"
+
+"@codemirror/state@^0.18.0", "@codemirror/state@^0.18.3":
+  version "0.18.6"
+  resolved "https://registry.npm.taobao.org/@codemirror/state/download/@codemirror/state-0.18.6.tgz#46f4cabd7e635dd0f229d0ff1136d79b071354f8"
+  integrity sha1-RvTKvX5jXdDyKdD/ETbXmwcTVPg=
+  dependencies:
+    "@codemirror/text" "^0.18.0"
+
+"@codemirror/text@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.npm.taobao.org/@codemirror/text/download/@codemirror/text-0.18.0.tgz#a4a98862989ccef5545e730b269136d524c6a7c7"
+  integrity sha1-pKmIYpiczvVUXnMLJpE21STGp8c=
+
+"@codemirror/tooltip@^0.18.4":
+  version "0.18.4"
+  resolved "https://registry.npm.taobao.org/@codemirror/tooltip/download/@codemirror/tooltip-0.18.4.tgz#981bc0ced792c6754148edbc1f60092f3fa54207"
+  integrity sha1-mBvAzteSxnVBSO28H2AJLz+lQgc=
+  dependencies:
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
+
+"@codemirror/view@^0.18.0":
+  version "0.18.7"
+  resolved "https://registry.npm.taobao.org/@codemirror/view/download/@codemirror/view-0.18.7.tgz#e7c839734240e4d3c70a20b56ddf39d93a9348a6"
+  integrity sha1-58g5c0JA5NPHCiC1bd852TqTSKY=
+  dependencies:
+    "@codemirror/rangeset" "^0.18.0"
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/text" "^0.18.0"
+    style-mod "^4.0.0"
+    w3c-keyname "^2.2.4"
+
 "@microsoft/api-extractor-model@7.12.2":
   version "7.12.2"
   resolved "https://registry.npm.taobao.org/@microsoft/api-extractor-model/download/@microsoft/api-extractor-model-7.12.2.tgz#d48b35e8ed20643b1c19d7a4f80c90c42dc7d1d8"
@@ -103,10 +331,10 @@
   dependencies:
     magic-string "^0.25.0"
 
-"@types/codemirror@^0.0.108":
-  version "0.0.108"
-  resolved "https://registry.npm.taobao.org/@types/codemirror/download/@types/codemirror-0.0.108.tgz?cache=0&sync_timestamp=1613378308505&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fcodemirror%2Fdownload%2F%40types%2Fcodemirror-0.0.108.tgz#e640422b666bf49251b384c390cdeb2362585bde"
-  integrity sha1-5kBCK2Zr9JJRs4TDkM3rI2JYW94=
+"@types/codemirror@^0.0.109":
+  version "0.0.109"
+  resolved "https://registry.npm.taobao.org/@types/codemirror/download/@types/codemirror-0.0.109.tgz?cache=0&sync_timestamp=1618544014446&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fcodemirror%2Fdownload%2F%40types%2Fcodemirror-0.0.109.tgz#89d575ff1c7b462c4c3b8654f8bb38e5622e9036"
+  integrity sha1-idV1/xx7RixMO4ZU+Ls45WIukDY=
   dependencies:
     "@types/tern" "*"
 
@@ -146,7 +374,7 @@
 
 "@types/tern@*":
   version "0.23.3"
-  resolved "https://registry.npm.taobao.org/@types/tern/download/@types/tern-0.23.3.tgz#4b54538f04a88c9ff79de1f6f94f575a7f339460"
+  resolved "https://registry.npm.taobao.org/@types/tern/download/@types/tern-0.23.3.tgz?cache=0&sync_timestamp=1613386339715&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Ftern%2Fdownload%2F%40types%2Ftern-0.23.3.tgz#4b54538f04a88c9ff79de1f6f94f575a7f339460"
   integrity sha1-S1RTjwSojJ/3neH2+U9XWn8zlGA=
   dependencies:
     "@types/estree" "*"
@@ -212,6 +440,11 @@ chalk@^2.4.2:
     escape-string-regexp "^1.0.5"
     supports-color "^5.3.0"
 
+codemirror@^5.60.0:
+  version "5.60.0"
+  resolved "https://registry.npm.taobao.org/codemirror/download/codemirror-5.60.0.tgz?cache=0&sync_timestamp=1616238813875&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fcodemirror%2Fdownload%2Fcodemirror-5.60.0.tgz#00a8cfd287d5d8737ceb73987f04aee2fe5860da"
+  integrity sha1-AKjP0ofV2HN863OYfwSu4v5YYNo=
+
 color-convert@^1.9.0:
   version "1.9.3"
   resolved "https://registry.npm.taobao.org/color-convert/download/color-convert-1.9.3.tgz#bb71850690e1f136567de629d2d5471deda4c1e8"
@@ -243,6 +476,11 @@ create-require@^1.1.0:
   version "1.1.1"
   resolved "https://registry.npm.taobao.org/create-require/download/create-require-1.1.1.tgz#c1d7e8f1e5f6cfc9ff65f9cd352d37348756c333"
   integrity sha1-wdfo8eX2z8n/ZfnNNS03NIdWwzM=
+
+crelt@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.npm.taobao.org/crelt/download/crelt-1.0.5.tgz#57c0d52af8c859e354bace1883eb2e1eb182bb94"
+  integrity sha1-V8DVKvjIWeNUus4Yg+suHrGCu5Q=
 
 csstype@^3.0.2:
   version "3.0.7"
@@ -364,6 +602,25 @@ jsonfile@^4.0.0:
   integrity sha1-h3Gq4HmbZAdrdmQPygWPnBDjPss=
   optionalDependencies:
     graceful-fs "^4.1.6"
+
+lezer-javascript@^0.13.0:
+  version "0.13.3"
+  resolved "https://registry.npm.taobao.org/lezer-javascript/download/lezer-javascript-0.13.3.tgz#cdf72fca777f24a66458b800711ecb78085e7b46"
+  integrity sha1-zfcvynd/JKZkWLgAcR7LeAhee0Y=
+  dependencies:
+    lezer "^0.13.0"
+
+lezer-tree@^0.13.0, lezer-tree@^0.13.2:
+  version "0.13.2"
+  resolved "https://registry.npm.taobao.org/lezer-tree/download/lezer-tree-0.13.2.tgz#00f4671309b15c27b131f637e430ce2d4d5f7065"
+  integrity sha1-APRnEwmxXCexMfY35DDOLU1fcGU=
+
+lezer@^0.13.0, lezer@^0.13.4:
+  version "0.13.4"
+  resolved "https://registry.npm.taobao.org/lezer/download/lezer-0.13.4.tgz#f0396a3447c7a8f40391623f3f47a4d95559c42f"
+  integrity sha1-8DlqNEfHqPQDkWI/P0ek2VVZxC8=
+  dependencies:
+    lezer-tree "^0.13.2"
 
 locate-path@^5.0.0:
   version "5.0.0"
@@ -594,6 +851,11 @@ strip-json-comments@~3.1.1:
   resolved "https://registry.npm.taobao.org/strip-json-comments/download/strip-json-comments-3.1.1.tgz#31f1281b3832630434831c310c01cccda8cbe006"
   integrity sha1-MfEoGzgyYwQ0gxwxDAHMzajL4AY=
 
+style-mod@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npm.taobao.org/style-mod/download/style-mod-4.0.0.tgz#97e7c2d68b592975f2ca7a63d0dd6fcacfe35a01"
+  integrity sha1-l+fC1otZKXXyynpj0N1vys/jWgE=
+
 supports-color@^5.3.0:
   version "5.5.0"
   resolved "https://registry.npm.taobao.org/supports-color/download/supports-color-5.5.0.tgz?cache=0&sync_timestamp=1611394023277&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fsupports-color%2Fdownload%2Fsupports-color-5.5.0.tgz#e2e69a44ac8772f78a1ec0b35b689df6530efc8f"
@@ -670,6 +932,11 @@ validator@^8.0.0:
   version "8.2.0"
   resolved "https://registry.npm.taobao.org/validator/download/validator-8.2.0.tgz#3c1237290e37092355344fef78c231249dab77b9"
   integrity sha1-PBI3KQ43CSNVNE/veMIxJJ2rd7k=
+
+w3c-keyname@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.npm.taobao.org/w3c-keyname/download/w3c-keyname-2.2.4.tgz#4ade6916f6290224cdbd1db8ac49eab03d0eef6b"
+  integrity sha1-St5pFvYpAiTNvR24rEnqsD0O72s=
 
 yallist@^4.0.0:
   version "4.0.0"
