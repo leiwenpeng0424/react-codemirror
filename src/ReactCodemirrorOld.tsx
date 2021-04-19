@@ -1,3 +1,6 @@
+/**
+ * @desc 对codemirror5的封装
+ */
 import React, {
   useEffect,
   useImperativeHandle,
@@ -7,6 +10,8 @@ import React, {
 import codemirror from "codemirror"
 import sqlKeywords from "./keywords"
 import Lifecycle from "./Lifecycle"
+// codemirror
+import { defineOption } from "codemirror"
 import type {
   Editor,
   EditorConfiguration,
@@ -18,6 +23,8 @@ import "codemirror/addon/hint/show-hint.js"
 import "codemirror/lib/codemirror.css"
 import "codemirror/addon/hint/show-hint.css"
 import "codemirror/theme/abcdef.css"
+// codemirror
+import formatter from "./formatter/sql"
 
 function isPromise(obj: unknown): boolean {
   return Object.prototype.toString.call(obj) === "[object Promise]"
@@ -49,7 +56,40 @@ export type ReactCodemirrorProps = {
   getExtraCompletions?: (
     word?: string
   ) => string[] | Promise<string[]>
+  /**
+   * 在保存之后，触发格式化操作
+   */
+  formatAfterSave: boolean
 }
+
+/**
+ * 格式化SQL
+ */
+defineOption("format", false, (cm: Editor, val: boolean) => {
+  const value = cm.getValue()
+
+  if (val) {
+    const formattedValue = formatter(value, {
+      language: "sql",
+    })
+
+    cm.setOption("value", formattedValue)
+  } else {
+  }
+})
+
+/**
+ * 设置placeholder的替换效果
+ */
+// defineOption("template", {}, (cm: Editor) => {
+//   const value = cm.getValue()
+//   const formattedValue = formatter(value, {
+//     language: "sql",
+//     params: {},
+//   })
+//
+//   cm.setOption("value", formattedValue)
+// })
 
 /**
  *
