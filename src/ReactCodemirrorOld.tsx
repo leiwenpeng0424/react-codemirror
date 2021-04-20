@@ -1,30 +1,29 @@
 /**
  * @desc 对codemirror5的封装
  */
-import React, {
-  useEffect,
-  useImperativeHandle,
-  forwardRef,
-  ForwardedRef,
-} from "react"
-import codemirror from "codemirror"
-import sqlKeywords from "./keywords"
-import Lifecycle from "./Lifecycle"
-// codemirror
-import { defineOption } from "codemirror"
 import type {
   Editor,
   EditorConfiguration,
   EditorFromTextArea,
 } from "codemirror"
-import "codemirror/addon/lint/lint.js"
-import "codemirror/mode/sql/sql.js"
-import "codemirror/addon/hint/show-hint.js"
-import "codemirror/lib/codemirror.css"
+import codemirror from "codemirror"
+import type { IFormatOptions } from "./format/format"
 import "codemirror/addon/hint/show-hint.css"
+import "codemirror/addon/hint/show-hint.js"
+import "codemirror/addon/lint/lint.js"
+import "codemirror/lib/codemirror.css"
+import "codemirror/mode/sql/sql.js"
 import "codemirror/theme/abcdef.css"
-// codemirror
-import formatter from "./formatter/sql"
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+} from "react"
+import Lifecycle from "./hooks/Lifecycle"
+import sqlKeywords from "./keywords"
+// import "./lint/sql-lint"
+import "./format/format"
 
 function isPromise(obj: unknown): boolean {
   return Object.prototype.toString.call(obj) === "[object Promise]"
@@ -32,82 +31,52 @@ function isPromise(obj: unknown): boolean {
 
 export type ReactCodemirrorProps = {
   /**
+   * @description 编辑器展示的内容文本
+   */
+  value?: string
+  /**
    * @description codemirror的配置，
    * @link {https://codemirror.net/doc/manual.html#config}
    */
-  options?: EditorConfiguration
+  options?: EditorConfiguration & {
+    formatOptions?: IFormatOptions
+  }
   /**
    * @description editor发生后出发的事件，用来获取更改后，editor的内容
    */
   onChange?: (value: string) => void
   /**
-   * @description 对于智能提示，可以直接通过改字段提供，也可以通过`getExtraCompletions`字段使用一个函数来提供，
-   *              函数方式是为了针对需要使用接口来获取的场景
+   * @description 拓展自动补全功能，提供外部方法来补从不全的待选项
    */
-  extraCompletions?: string[]
+  extraCompletions?:
+    | string[]
+    | ((word: string) => string[] | Promise<string[]>)
   /**
    * @description 获取到当前的editor实例
    * @deprecated 使用ref来获取当前codemirror的实例
    */
-  getInstance?: (cm: Editor) => Editor
-  /**
-   * @description 使用函数来获取智能补全的待选项，可以返回一个Promise，该方法接受当前输入框中的值作为判断
-   */
-  getExtraCompletions?: (
-    word?: string
-  ) => string[] | Promise<string[]>
-  /**
-   * 在保存之后，触发格式化操作
-   */
-  formatAfterSave: boolean
+  // getInstance?: (cm: Editor) => Editor
+  // getExtraCompletions?: (
+  //   word?: string
+  // ) => string[] | Promise<string[]>
 }
 
 /**
- * 格式化SQL
- */
-defineOption("format", false, (cm: Editor, val: boolean) => {
-  const value = cm.getValue()
-
-  if (val) {
-    const formattedValue = formatter(value, {
-      language: "sql",
-    })
-
-    cm.setOption("value", formattedValue)
-  } else {
-  }
-})
-
-/**
- * 设置placeholder的替换效果
- */
-// defineOption("template", {}, (cm: Editor) => {
-//   const value = cm.getValue()
-//   const formattedValue = formatter(value, {
-//     language: "sql",
-//     params: {},
-//   })
-//
-//   cm.setOption("value", formattedValue)
-// })
-
-/**
- *
+ * 外部使用的codemirror react封装
  * @param options
+ * @param value
  * @param onChange change event
  * @param getInstance
  * @param extraCompletions
- * @param getExtraCompletions
  * @param ref
  * @public
  */
 function ReactCodemirrorOld(
   {
     options = {},
+    value,
     onChange,
-    getInstance,
     extraCompletions = [],
-    getExtraCompletions = () => [],
   }: ReactCodemirrorProps,
   ref: ForwardedRef<Editor>
 ): React.ReactElement {
@@ -126,6 +95,14 @@ function ReactCodemirrorOld(
   }, [options])
 
   /**
+   * @description 单独修改value的变化
+   */
+  useEffect(() => codemirrorIns.current.setValue(value), [
+    value,
+    codemirrorRef.current,
+  ])
+
+  /**
    * filter matched keywords
    */
   function completion(cm: Editor) {
@@ -139,37 +116,40 @@ function ReactCodemirrorOld(
         while (end < line.length && /\w/.test(line.charAt(end))) ++end
         const word = line.slice(start, end + 1)
 
-        const keywords = sqlKeywords.keywords
-          .map((item) => item.text.replace("_", " "))
-          .filter((keyword) => keyword.toLowerCase().startsWith(word))
+        const keywords = word
+          ? sqlKeywords.keywords
+              .map((item) => item.text.replace("_", " "))
+              .filter((keyword) =>
+                keyword.toLowerCase().startsWith(word)
+              )
+          : []
 
-        let extraWordsFromAPI = getExtraCompletions(word) || []
+        console.log("--> ", word, keywords)
 
-        if (isPromise(extraWordsFromAPI)) {
-          Promise.resolve(extraWordsFromAPI).then(
-            (extraWordsFromAPI) => {
+        let extraWords
+
+        if (typeof extraCompletions === "function") {
+          extraWords = extraCompletions(word)
+          if (isPromise(extraWords)) {
+            Promise.resolve(extraWords).then((words) => {
               resolve({
-                list: [
-                  ...keywords,
-                  ...extraCompletions,
-                  ...extraWordsFromAPI,
-                ],
+                list: [...keywords, ...words],
                 from: codemirror.Pos(cur.line, start),
                 to: codemirror.Pos(cur.line, end),
               })
-            }
-          )
-        } else {
-          resolve({
-            list: [
-              ...keywords,
-              ...extraCompletions,
-              ...(extraWordsFromAPI as string[]),
-            ],
-            from: codemirror.Pos(cur.line, start),
-            to: codemirror.Pos(cur.line, end),
-          })
+            })
+
+            return
+          }
         }
+
+        extraWords = extraCompletions
+
+        resolve({
+          list: [...keywords, ...extraWords],
+          from: codemirror.Pos(cur.line, start),
+          to: codemirror.Pos(cur.line, end),
+        })
       }, 100)
     })
   }
@@ -185,6 +165,7 @@ function ReactCodemirrorOld(
         hintOptions: {
           hint: completion,
         },
+        lint: {},
         ...options,
       }
     ))
@@ -192,19 +173,12 @@ function ReactCodemirrorOld(
     // const editor = codemirrorIns.current
     editor.on(
       "change",
-      (cm: Editor) => onChange && onChange(cm.getValue())
+      (cm: Editor) => onChange && onChange(cm.getValue(" "))
     )
     editor.on("keypress", (cm: Editor, event: KeyboardEvent) => {
       // 避免空格键也进行提示
-      if (
-        event.which === 32 ||
-        event.keyCode === 32 ||
-        event.code === "Space"
-      )
-        return
       cm.showHint()
     })
-    getInstance && getInstance(editor)
   }
 
   function willUnmount() {}

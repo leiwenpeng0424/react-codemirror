@@ -8,7 +8,7 @@ import {
   basicSetup,
 } from "@codemirror/basic-setup"
 import { javascript } from "@codemirror/lang-javascript"
-import React, { useEffect, useRef } from "react"
+import React, { useRef } from "react"
 import { useMount } from "./hooks"
 
 import type { LegacyRef } from "react"

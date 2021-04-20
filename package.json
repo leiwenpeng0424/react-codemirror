@@ -1,12 +1,15 @@
 {
   "name": "react-tools-codemirror",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "description": "CodeMirror wrapper",
   "main": "dist/react-tools-codemirror.js",
   "repository": "https://github.com/leiwenpeng0424/react-codemirror.git",
   "author": "ray",
   "license": "MIT",
   "private": false,
+  "dependencies": {
+    "sql-formatter": "^4.0.2"
+  },
   "devDependencies": {
     "@codemirror/basic-setup": "^0.18.0",
     "@codemirror/lang-javascript": "^0.18.0",
@@ -37,13 +40,11 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c && yarn api",
     "dev": "cross-env NODE_ENV=development rollup -cw",
-    "api": "api-extractor run --local --verbose && ts-node ./scripts/api-extractor/cleanup-tsc-generated-dts.ts"
+    "api": "api-extractor run --local --verbose && ts-node ./scripts/api-extractor/cleanup-tsc-generated-dts.ts",
+    "release": "yarn build && ts-node ./scripts/release.ts"
   },
   "files": [
     "dist",
     "README.md"
-  ],
-  "dependencies": {
-    "sql-formatter": "^4.0.2"
-  }
+  ]
 }

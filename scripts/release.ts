@@ -1,8 +1,8 @@
 import { spawn } from "child_process"
 import minimist from "minimist"
 import chalk from "chalk"
-import fs from "fs"
-import path from "path"
+import * as fs from "fs"
+import * as path from "path"
 import { version } from "../package.json"
 
 const args = minimist(process.argv.slice(2))
@@ -68,7 +68,9 @@ function updatePackageJson(
     })
   } catch (e) {
     console.log(
-      chalk.red("encountered error while processing the package.json file"),
+      chalk.red(
+        "encountered error while processing the package.json file"
+      ),
       e
     )
   }
@@ -82,7 +84,9 @@ function reversion(): void {
 }
 
 if (!args.type) {
-  console.log(chalk.red("Please specify a publish type, using --type"))
+  console.log(
+    chalk.red("Please specify a publish type, using --type")
+  )
   console.log("")
   process.exit(2)
 }
@@ -93,10 +97,14 @@ updatePackageJson({
   version: bumpUpVersion(version, args.type),
 })
 
-const child = spawn("pnpm", ["publish", "--tag", "latest", "--no-git-checks"], {
-  stdio: "inherit",
-  cwd: process.cwd(),
-})
+const child = spawn(
+  "pnpm",
+  ["publish", "--tag", "latest", "--no-git-checks"],
+  {
+    stdio: "inherit",
+    cwd: process.cwd(),
+  }
+)
 
 child
   .on("error", (e) => {
