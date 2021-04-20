@@ -3,32 +3,49 @@
  */
 
 import {
+  basicSetup,
   EditorState,
   EditorView,
-  basicSetup,
 } from "@codemirror/basic-setup"
-import { javascript } from "@codemirror/lang-javascript"
-import React, { useRef } from "react"
+import { sql } from "@codemirror/lang-sql"
+import type { LegacyRef } from "react"
+import React, { forwardRef, useImperativeHandle, useRef } from "react"
 import { useMount } from "./hooks"
 
-import type { LegacyRef } from "react"
+export type ReactCodemirror = {
+  language?: "sql" | "javascript"
+}
 
-export default function ReactCodemirror() {
-  const ref = useRef<HTMLDivElement>()
+/**
+ * react codemirror
+ * @param props
+ * @param ref
+ * @constructor
+ */
+function ReactCodemirror(
+  props: ReactCodemirror,
+  ref: React.Ref<EditorView>
+) {
+  let { current: editor } = useRef<EditorView>()
+  const editorRef = useRef<HTMLDivElement>()
+
+  useImperativeHandle(ref, () => editor, [editor])
 
   useMount(() => {
-    let editor = new EditorView({
+    editor = new EditorView({
       state: EditorState.create({
-        extensions: [basicSetup, javascript()],
+        extensions: [basicSetup, sql()],
       }),
-      parent: ref.current,
+      parent: editorRef.current,
     })
   })
 
   return (
     <div
-      ref={ref as LegacyRef<HTMLDivElement>}
+      ref={editorRef as LegacyRef<HTMLDivElement>}
       className="codemirror-editor-body"
     />
   )
 }
+
+export default forwardRef(ReactCodemirror)

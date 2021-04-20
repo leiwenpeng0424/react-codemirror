@@ -12,6 +12,9 @@ const ExtraCodemirrorFiles = [
   "codemirror/addon/hint/show-hint.css", // show-hint style sheet
   "codemirror/theme/abcdef.css", // default theme, abcdef
   "codemirror/lib/codemirror.css", // necessary style sheet
+  "@codemirror/basic-setup",
+  "@codemirror/lang-javascript",
+  "@codemirror/lang-sql",
 ]
 
 module.exports = {
@@ -28,7 +31,9 @@ module.exports = {
     }),
     buble({
       objectAssign: true,
-      transforms: {},
+      transforms: {
+        forOf: false,
+      },
     }),
     process.env.NODE_ENV !== "development" && terser(),
   ].filter(Boolean),
