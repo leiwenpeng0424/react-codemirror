@@ -14,6 +14,7 @@ import "codemirror/addon/lint/lint.js"
 import "codemirror/lib/codemirror.css"
 import "codemirror/mode/sql/sql.js"
 import "codemirror/theme/abcdef.css"
+import "codemirror/theme/idea.css"
 import React, {
   ForwardedRef,
   forwardRef,
@@ -58,6 +59,15 @@ export type ReactCodemirrorProps = {
   extraCompletions?:
     | string[]
     | ((word: string) => string[] | Promise<string[]>)
+  /**
+   * 设置编辑器的样式
+   */
+  theme?: "dark" | "light"
+}
+
+const THEMES = {
+  dark: "abcdef",
+  light: "idea",
 }
 
 /**
@@ -72,6 +82,7 @@ export type ReactCodemirrorProps = {
  */
 function ReactCodemirrorOld(
   {
+    theme = "dark",
     options = {},
     value = "",
     onChange,
@@ -82,17 +93,6 @@ function ReactCodemirrorOld(
 ): React.ReactElement {
   const codemirrorRef = React.useRef<HTMLTextAreaElement>()
   const codemirrorIns = React.useRef<EditorFromTextArea>()
-
-  useEffect(() => {
-    const ins = codemirrorIns.current
-    Object.keys(options).forEach(
-      (optKey: keyof EditorConfiguration) => {
-        if (options[optKey] !== ins.getOption(optKey)) {
-          ins.setOption(optKey, options[optKey])
-        }
-      }
-    )
-  }, [options])
 
   /**
    * filter matched keywords
@@ -150,7 +150,7 @@ function ReactCodemirrorOld(
     const editor = (codemirrorIns.current = codemirror.fromTextArea(
       codemirrorRef.current,
       {
-        theme: "abcdef",
+        theme: THEMES[theme],
         mode: "sql",
         autocorrect: false,
         lineNumbers: true,
@@ -182,6 +182,22 @@ function ReactCodemirrorOld(
       editor.setValue(defaultValue)
     }
   }
+
+  useEffect(
+    () => codemirrorIns.current.setOption("theme", THEMES[theme]),
+    [theme]
+  )
+
+  useEffect(() => {
+    const ins = codemirrorIns.current
+    Object.keys(options).forEach(
+      (optKey: keyof EditorConfiguration) => {
+        if (options[optKey] !== ins.getOption(optKey)) {
+          ins.setOption(optKey, options[optKey])
+        }
+      }
+    )
+  }, [options])
 
   useImperativeHandle(ref, () => codemirrorIns.current, [])
 

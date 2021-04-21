@@ -12,6 +12,7 @@ const ExtraCodemirrorFiles = [
   "codemirror/addon/hint/show-hint.css", // show-hint style sheet
   "codemirror/theme/abcdef.css", // default theme, abcdef
   "codemirror/lib/codemirror.css", // necessary style sheet
+  "codemirror/theme/idea.css", // 白色主题
   "@codemirror/basic-setup",
   "@codemirror/lang-javascript",
   "@codemirror/lang-sql",
