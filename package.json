@@ -8,12 +8,12 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "sql-formatter": "^4.0.2"
+    "@codemirror/basic-setup": "^0.18.0",
+    "@codemirror/lang-json": "^0.18.0",
+    "@codemirror/lang-javascript": "^0.18.0",
+    "@codemirror/lang-sql": "^0.18.0"
   },
   "devDependencies": {
-    "@codemirror/basic-setup": "^0.18.0",
-    "@codemirror/lang-javascript": "^0.18.0",
-    "@codemirror/lang-sql": "^0.18.0",
     "@microsoft/api-extractor": "^7.13.2",
     "@rollup/plugin-buble": "^0.21.3",
     "@rollup/plugin-commonjs": "^18.0.0",

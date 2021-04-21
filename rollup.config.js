@@ -3,7 +3,7 @@ const buble = require("@rollup/plugin-buble")
 const commonjs = require("@rollup/plugin-commonjs")
 const { nodeResolve } = require("@rollup/plugin-node-resolve")
 const { terser } = require("rollup-plugin-terser")
-const { name } = require("./package.json")
+const { name, dependencies } = require("./package.json")
 
 const ExtraCodemirrorFiles = [
   "codemirror/addon/lint/lint.js", // addon lint
@@ -38,5 +38,5 @@ module.exports = {
     }),
     // process.env.NODE_ENV !== "development" && terser(),
   ].filter(Boolean),
-  external: ["react", "codemirror", ...ExtraCodemirrorFiles],
+  external: [...Object.keys(dependencies)],
 }

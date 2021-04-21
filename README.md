@@ -18,11 +18,12 @@ export default function () {
   const [code, setCode] = useState("select * from TABLE_A")
   return (
     <ReactCodemirror
+      theme="dark" // dark，light，默认dark
       value={code} // @deperacated
-      defaultValue={code}
+      defaultValue={code} // 初始文本
       options={EditorOptions}
       onChange={(text: string) => {
-        //  编辑器中的文本
+        // 输入后的文本
       }}
       extraCompletions={
         // 对于自动补全的增强，可以丰富本身提供的有限的待选项
@@ -34,10 +35,6 @@ export default function () {
   )
 }
 ```
-
-注意
-
-    - 组件的 value 属性被废弃，增加 defaultValue 作为 editor 的默认初始化值展示
 
 ---
 

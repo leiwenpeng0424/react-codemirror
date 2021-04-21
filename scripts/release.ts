@@ -98,7 +98,7 @@ updatePackageJson({
 })
 
 const child = spawn(
-  "pnpm",
+  "npm",
   ["publish", "--tag", "latest", "--no-git-checks"],
   {
     stdio: "inherit",

@@ -141,6 +141,15 @@
     "@codemirror/view" "^0.18.0"
     lezer-javascript "^0.13.0"
 
+"@codemirror/lang-json@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/@codemirror/lang-json/-/lang-json-0.18.0.tgz#775f2dc95039a86fe3e6e55e4467e10c2ecae414"
+  integrity sha512-1xquwhwrocZEcURmccMYk1C3g2oj6mu0np1LT1dDGmvd/VVXC0Z9j6NV78zCSyJCIdL2y+RRBh4LVWW6J6NU6Q==
+  dependencies:
+    "@codemirror/highlight" "^0.18.0"
+    "@codemirror/language" "^0.18.0"
+    lezer-json "^0.13.0"
+
 "@codemirror/lang-sql@^0.18.0":
   version "0.18.0"
   resolved "https://registry.npm.taobao.org/@codemirror/lang-sql/download/@codemirror/lang-sql-0.18.0.tgz#30bd5662267b0f59f69ac6d8694561c5f72cb670"
@@ -780,6 +789,13 @@ lezer-javascript@^0.13.0:
   version "0.13.3"
   resolved "https://registry.npm.taobao.org/lezer-javascript/download/lezer-javascript-0.13.3.tgz#cdf72fca777f24a66458b800711ecb78085e7b46"
   integrity sha1-zfcvynd/JKZkWLgAcR7LeAhee0Y=
+  dependencies:
+    lezer "^0.13.0"
+
+lezer-json@^0.13.0:
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/lezer-json/-/lezer-json-0.13.1.tgz#d48b272d4f4a6eefa8183d603aa22115f8ecd7ce"
+  integrity sha512-iXIXSjqa/+jmaDKD4yPgpwfwQlbOcu/IaFgZ+3dgo3oVtitEVlAJYcfw8g9ywJtae3CYQlyOX9mjyi0VCNPlNg==
   dependencies:
     lezer "^0.13.0"
 
