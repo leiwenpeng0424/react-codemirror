@@ -18,7 +18,8 @@ export default function () {
   const [code, setCode] = useState("select * from TABLE_A")
   return (
     <ReactCodemirror
-      value={code}
+      value={code} // @deperacated
+      defaultValue={code}
       options={EditorOptions}
       onChange={(text: string) => {
         //  编辑器中的文本
@@ -33,6 +34,12 @@ export default function () {
   )
 }
 ```
+
+注意
+
+    - 组件的 value 属性被废弃，增加 defaultValue 作为 editor 的默认初始化值展示
+
+---
 
 - 格式化代码
 

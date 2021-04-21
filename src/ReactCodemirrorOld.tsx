@@ -7,7 +7,7 @@ import type {
   EditorFromTextArea,
 } from "codemirror"
 import codemirror from "codemirror"
-import type { IFormatOptions } from "./format/format"
+import type { IEditor, IFormatOptions } from "./format/format"
 import "codemirror/addon/hint/show-hint.css"
 import "codemirror/addon/hint/show-hint.js"
 import "codemirror/addon/lint/lint.js"
@@ -24,6 +24,7 @@ import Lifecycle from "./hooks/Lifecycle"
 import sqlKeywords from "./keywords"
 // import "./lint/sql-lint"
 import "./format/format"
+import { useTimeout } from "./hooks"
 
 function isPromise(obj: unknown): boolean {
   return Object.prototype.toString.call(obj) === "[object Promise]"
@@ -31,9 +32,14 @@ function isPromise(obj: unknown): boolean {
 
 export type ReactCodemirrorProps = {
   /**
-   * @description 编辑器展示的内容文本
+   * @description 编辑器展示的内容文本，改编辑器不太适合作为受控组件出现，最好不要用这个东西来文本的内容，可以通过ref返回的实例的getValue()方法来获取文本的实例。
+   * @deprecated
    */
   value?: string
+  /**
+   * @description 默认展示的文本内容
+   */
+  defaultValue?: string
   /**
    * @description codemirror的配置，
    * @link {https://codemirror.net/doc/manual.html#config}
@@ -43,6 +49,8 @@ export type ReactCodemirrorProps = {
   }
   /**
    * @description editor发生后出发的事件，用来获取更改后，editor的内容
+   *
+   * @bug 避免在onChange事件中调用修改value的方法，可能会有调用栈移除的风险
    */
   onChange?: (value: string) => void
   /**
@@ -51,14 +59,6 @@ export type ReactCodemirrorProps = {
   extraCompletions?:
     | string[]
     | ((word: string) => string[] | Promise<string[]>)
-  /**
-   * @description 获取到当前的editor实例
-   * @deprecated 使用ref来获取当前codemirror的实例
-   */
-  // getInstance?: (cm: Editor) => Editor
-  // getExtraCompletions?: (
-  //   word?: string
-  // ) => string[] | Promise<string[]>
 }
 
 /**
@@ -74,8 +74,9 @@ export type ReactCodemirrorProps = {
 function ReactCodemirrorOld(
   {
     options = {},
-    value,
+    value = "",
     onChange,
+    defaultValue = "",
     extraCompletions = [],
   }: ReactCodemirrorProps,
   ref: ForwardedRef<Editor>
@@ -96,9 +97,9 @@ function ReactCodemirrorOld(
 
   /**
    * @description 单独修改value的变化
+   *  只针对第一次加载组件渲染一次
    */
-  useEffect(() => codemirrorIns.current.setValue(value), [
-    value,
+  useEffect(() => codemirrorIns.current.setValue(defaultValue), [
     codemirrorRef.current,
   ])
 
@@ -124,12 +125,11 @@ function ReactCodemirrorOld(
               )
           : []
 
-        console.log("--> ", word, keywords)
-
         let extraWords
 
         if (typeof extraCompletions === "function") {
           extraWords = extraCompletions(word)
+
           if (isPromise(extraWords)) {
             Promise.resolve(extraWords).then((words) => {
               resolve({
@@ -173,12 +173,20 @@ function ReactCodemirrorOld(
     // const editor = codemirrorIns.current
     editor.on(
       "change",
-      (cm: Editor) => onChange && onChange(cm.getValue(" "))
+      (cm: Editor) => onChange && onChange(cm.getValue())
     )
+
     editor.on("keypress", (cm: Editor, event: KeyboardEvent) => {
-      // 避免空格键也进行提示
       cm.showHint()
     })
+
+    if (
+      options.formatOptions &&
+      Object.keys(options.formatOptions).length !== 0
+    ) {
+      // @ts-ignore
+      setTimeout(() => editor.format(), 100)
+    }
   }
 
   function willUnmount() {}

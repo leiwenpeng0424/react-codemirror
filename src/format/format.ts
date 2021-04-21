@@ -21,7 +21,7 @@ defineOption(
   }
 )
 
-defineExtension("format", function (opts) {
+defineExtension("format", function (opts: IFormatOptions = {}) {
   const defaultOptions = this.options.formatOptions || {
     language: "sql",
   }
