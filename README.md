@@ -25,7 +25,7 @@ export default function () {
       onChange={(text: string) => {
         // 输入后的文本
       }}
-      extraCompletions={
+      extraSource={
         // 对于自动补全的增强，可以丰富本身提供的有限的待选项
         ["TABLE_A", "TABLE_B"]
         // (word: string) => ["AAA", "BBB"] // 支持函数返回数组。或者是返回目标参数是数组的Promise对象

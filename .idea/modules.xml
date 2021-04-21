@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../initializer/.idea/initializer.iml" filepath="$PROJECT_DIR$/../initializer/.idea/initializer.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/react-codemirror.iml" filepath="$PROJECT_DIR$/.idea/react-codemirror.iml" />
     </modules>
   </component>

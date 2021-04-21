@@ -16,6 +16,7 @@ const ExtraCodemirrorFiles = [
   "@codemirror/basic-setup",
   "@codemirror/lang-javascript",
   "@codemirror/lang-sql",
+  "@codemirror/autocomplete",
 ]
 
 module.exports = {

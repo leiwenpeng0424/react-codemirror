@@ -35,26 +35,17 @@
     "@codemirror/view" "^0.18.0"
     lezer-tree "^0.13.0"
 
-"@codemirror/basic-setup@^0.18.0":
-  version "0.18.0"
-  resolved "https://registry.npm.taobao.org/@codemirror/basic-setup/download/@codemirror/basic-setup-0.18.0.tgz#721c50ca06581d9c31e45e2ccea5a280b4933a35"
-  integrity sha1-chxQygZYHZwx5F4szqWigLSTOjU=
+"@codemirror/autocomplete@^0.18.4":
+  version "0.18.4"
+  resolved "https://registry.yarnpkg.com/@codemirror/autocomplete/-/autocomplete-0.18.4.tgz#e1d67744e9006acc2ee48c875aaa231b6cd14e92"
+  integrity sha512-HgfSGSI44ylJd9Dhb6jSfS7Wm/c+pIQ2IHiE+tVUl1tV0cd1ySeRt5+/r4rE/4FubmkW7n97CnepGJFStj12YA==
   dependencies:
-    "@codemirror/autocomplete" "^0.18.0"
-    "@codemirror/closebrackets" "^0.18.0"
-    "@codemirror/commands" "^0.18.0"
-    "@codemirror/comment" "^0.18.0"
-    "@codemirror/fold" "^0.18.0"
-    "@codemirror/gutter" "^0.18.0"
-    "@codemirror/highlight" "^0.18.0"
-    "@codemirror/history" "^0.18.0"
     "@codemirror/language" "^0.18.0"
-    "@codemirror/lint" "^0.18.0"
-    "@codemirror/matchbrackets" "^0.18.0"
-    "@codemirror/rectangular-selection" "^0.18.0"
-    "@codemirror/search" "^0.18.0"
     "@codemirror/state" "^0.18.0"
+    "@codemirror/text" "^0.18.0"
+    "@codemirror/tooltip" "^0.18.4"
     "@codemirror/view" "^0.18.0"
+    lezer-tree "^0.13.0"
 
 "@codemirror/closebrackets@^0.18.0":
   version "0.18.0"
@@ -229,7 +220,7 @@
     "@codemirror/view" "^0.18.0"
     crelt "^1.0.5"
 
-"@codemirror/state@^0.18.0", "@codemirror/state@^0.18.3":
+"@codemirror/state@^0.18.0", "@codemirror/state@^0.18.3", "@codemirror/state@^0.18.6":
   version "0.18.6"
   resolved "https://registry.npm.taobao.org/@codemirror/state/download/@codemirror/state-0.18.6.tgz#46f4cabd7e635dd0f229d0ff1136d79b071354f8"
   integrity sha1-RvTKvX5jXdDyKdD/ETbXmwcTVPg=
@@ -240,6 +231,15 @@
   version "0.18.0"
   resolved "https://registry.npm.taobao.org/@codemirror/text/download/@codemirror/text-0.18.0.tgz#a4a98862989ccef5545e730b269136d524c6a7c7"
   integrity sha1-pKmIYpiczvVUXnMLJpE21STGp8c=
+
+"@codemirror/theme-one-dark@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/@codemirror/theme-one-dark/-/theme-one-dark-0.18.0.tgz#46fc508806deb0eb63956442c2d2c563b49b15b2"
+  integrity sha512-+CicflMb8Pydc2sXQPIQe6QwiPw8pstd7Dmb6ZjqtiOPPl8sHvf5gsTBxJfwRWZTEoJlsurCiQlG8X84IFGvcQ==
+  dependencies:
+    "@codemirror/highlight" "^0.18.0"
+    "@codemirror/state" "^0.18.0"
+    "@codemirror/view" "^0.18.0"
 
 "@codemirror/tooltip@^0.18.4":
   version "0.18.4"
@@ -472,11 +472,6 @@ arg@^4.1.0:
   version "4.1.3"
   resolved "https://registry.npm.taobao.org/arg/download/arg-4.1.3.tgz?cache=0&sync_timestamp=1605575001049&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Farg%2Fdownload%2Farg-4.1.3.tgz#269fc7ad5b8e42cb63c896d5666017261c144089"
   integrity sha1-Jp/HrVuOQstjyJbVZmAXJhwUQIk=
-
-argparse@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.npm.taobao.org/argparse/download/argparse-2.0.1.tgz#246f50f3ca78a3240f6c997e8a9bd1eac49e4b38"
-  integrity sha1-JG9Q88p4oyQPbJl+ipvR6sSeSzg=
 
 argparse@~1.0.9:
   version "1.0.10"
@@ -1104,13 +1099,6 @@ sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.npm.taobao.org/sprintf-js/download/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
-
-sql-formatter@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.npm.taobao.org/sql-formatter/download/sql-formatter-4.0.2.tgz#2b359e5a4c611498d327b9659da7329d71724607"
-  integrity sha1-KzWeWkxhFJjTJ7llnacynXFyRgc=
-  dependencies:
-    argparse "^2.0.1"
 
 string-argv@~0.3.1:
   version "0.3.1"

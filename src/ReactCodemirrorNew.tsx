@@ -6,22 +6,35 @@ import {
   basicSetup,
   EditorState,
   EditorView,
-} from "@codemirror/basic-setup"
+  Compartment,
+} from "./setup"
+import { Extension, Prec } from "@codemirror/state"
 import { LanguageSupport } from "@codemirror/language"
 import type { LegacyRef } from "react"
-import React, { forwardRef, useImperativeHandle, useRef } from "react"
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from "react"
 import { useMount } from "./hooks"
-import { Extension } from "@codemirror/state"
+
 // language
 import javascript, { JavascriptProps } from "./javascript"
 import json, { JsonProps } from "./json"
 import sql, { SqlProps } from "./sql"
+
+// extensions
+import { viewChange } from "./extensions"
 
 const LANGUAGE_EXTENSIONS = {
   javascript,
   sql,
   json,
 }
+
+//theme
+import { oneDark } from "@codemirror/theme-one-dark"
 
 export interface CommonProps {
   /**
@@ -35,7 +48,7 @@ export interface CommonProps {
   /**
    * 编辑器内容发生变化触发的回调函数
    */
-  onChange?: (value: string) => void
+  onChange?: (value: unknown) => void
   /**
    * 针对当前输入添加额外的补全候选
    */
@@ -66,31 +79,46 @@ function ReactCodemirror(
     onChange,
   } = props
 
-  let { current: editor } = useRef<EditorView>()
-  const editorRef = useRef<HTMLDivElement>()
+  const element = useRef<HTMLDivElement>()
 
-  useImperativeHandle(ref, () => editor, [editor])
+  let editor = useRef<EditorView>()
+  let languageCompartment = useRef<Compartment>()
+
+  useImperativeHandle(ref, () => editor.current, [editor])
 
   useMount(() => {
-    const state = EditorState.create({
+    languageCompartment.current = new Compartment()
+
+    const state: EditorState = EditorState.create({
       doc: defaultValue,
       extensions: [
         basicSetup,
-        ...extensions,
-        // @ts-ignore language是sql的时候，langOption的类型是never。
-        LANGUAGE_EXTENSIONS[language](langOptions),
+        languageCompartment.current.of([
+          ...extensions,
+          LANGUAGE_EXTENSIONS[language](langOptions),
+        ]),
+        viewChange(onChange),
+        oneDark,
       ],
     })
 
-    editor = new EditorView({
+    editor.current = new EditorView({
       state: state,
-      parent: editorRef.current,
+      parent: element.current,
     })
   })
 
+  useEffect(() => {
+    editor.current.dispatch({
+      effects: languageCompartment.current.reconfigure(
+        LANGUAGE_EXTENSIONS[language](langOptions)
+      ),
+    })
+  }, [langOptions, languageCompartment, editor])
+
   return (
     <div
-      ref={editorRef as LegacyRef<HTMLDivElement>}
+      ref={element as LegacyRef<HTMLDivElement>}
       className="codemirror-editor-body"
     />
   )
