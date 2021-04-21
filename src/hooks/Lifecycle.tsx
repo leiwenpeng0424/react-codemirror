@@ -1,8 +1,8 @@
 import React from "react"
 
 type LifecycleProps = {
-  didMount: () => void
-  willUnmount: () => void
+  didMount?: () => void
+  willUnmount?: () => void
 }
 
 type LifecycleState = {}
@@ -15,11 +15,11 @@ export default class Lifecycle extends React.PureComponent<
   LifecycleState
 > {
   componentDidMount() {
-    this.props.didMount()
+    this.props.didMount && this.props.didMount()
   }
 
   componentWillUnmount() {
-    this.props.willUnmount()
+    this.props.willUnmount && this.props.willUnmount()
   }
 
   render() {

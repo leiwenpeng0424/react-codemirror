@@ -7,7 +7,7 @@ import type {
   EditorFromTextArea,
 } from "codemirror"
 import codemirror from "codemirror"
-import type { IEditor, IFormatOptions } from "./format/format"
+import type { IFormatOptions } from "./format/format"
 import "codemirror/addon/hint/show-hint.css"
 import "codemirror/addon/hint/show-hint.js"
 import "codemirror/addon/lint/lint.js"
@@ -22,9 +22,8 @@ import React, {
 } from "react"
 import Lifecycle from "./hooks/Lifecycle"
 import sqlKeywords from "./keywords"
-// import "./lint/sql-lint"
 import "./format/format"
-import { useTimeout } from "./hooks"
+import { format } from "sql-formatter"
 
 function isPromise(obj: unknown): boolean {
   return Object.prototype.toString.call(obj) === "[object Promise]"
@@ -96,14 +95,6 @@ function ReactCodemirrorOld(
   }, [options])
 
   /**
-   * @description 单独修改value的变化
-   *  只针对第一次加载组件渲染一次
-   */
-  useEffect(() => codemirrorIns.current.setValue(defaultValue), [
-    codemirrorRef.current,
-  ])
-
-  /**
    * filter matched keywords
    */
   function completion(cm: Editor) {
@@ -155,6 +146,7 @@ function ReactCodemirrorOld(
   }
 
   function didMount() {
+    // 只在初次加载中创建实例
     const editor = (codemirrorIns.current = codemirror.fromTextArea(
       codemirrorRef.current,
       {
@@ -180,23 +172,21 @@ function ReactCodemirrorOld(
       cm.showHint()
     })
 
-    if (
-      options.formatOptions &&
-      Object.keys(options.formatOptions).length !== 0
-    ) {
-      // @ts-ignore
-      setTimeout(() => editor.format(), 100)
+    /**
+     * 初次渲染的时候，如果提供了格式化选项，那就格式化初始值之后再展示文本
+     */
+    if (options.formatOptions) {
+      //@ts-ignore
+      editor.setValue(format(defaultValue, options.formatOptions))
+    } else {
+      editor.setValue(defaultValue)
     }
   }
 
-  function willUnmount() {}
-
-  useImperativeHandle(ref, () => codemirrorIns.current, [
-    codemirrorIns.current,
-  ])
+  useImperativeHandle(ref, () => codemirrorIns.current, [])
 
   return (
-    <Lifecycle didMount={didMount} willUnmount={willUnmount}>
+    <Lifecycle didMount={didMount}>
       <textarea
         ref={codemirrorRef as React.LegacyRef<HTMLTextAreaElement>}
       />
