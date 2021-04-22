@@ -18,19 +18,15 @@ export default function () {
   const [code, setCode] = useState("select * from TABLE_A")
   return (
     <ReactCodemirror
-      theme="dark" // dark，light，默认dark
-      value={code} // @deperacated
-      defaultValue={code} // 初始文本
-      options={EditorOptions}
-      onChange={(text: string) => {
-        // 输入后的文本
-      }}
-      extraSource={
-        // 对于自动补全的增强，可以丰富本身提供的有限的待选项
-        ["TABLE_A", "TABLE_B"]
-        // (word: string) => ["AAA", "BBB"] // 支持函数返回数组。或者是返回目标参数是数组的Promise对象
-        // (word: string) => Promise.resolve(["AAA", "BBBB"])
-      }
+      theme="dark" // 提供黑暗和明亮两种模式 light/dark
+      editable={true} // 文本是否可编辑
+      extensions={[]} // 拓展方法
+      extraCompletions={[]} // 已废弃
+      onChange={(t: string) => t} // 在editable是true的情况下，会在每次编辑器内容变化的时候执行
+      defaultValue={"asd"} // 初始值
+      value={"asd"} // 与editable关联，如果editable为false，则编辑器会接受value的值作为内容展示
+      language="" // 内容格式，javascript/json/sql
+      langOptions={} // 传递给语言拓展方法的初始参数
     />
   )
 }
@@ -40,36 +36,64 @@ export default function () {
 
 - 格式化代码
 
-  `现在只支持sql的格式化`
+  `本身没有方法做格式化，提供format方法更新格式化之后的文本（通过ref将format返回，父组件可以通过ref拿到），编辑器会渲染方法返回的格式化的文本`
 
-```typescript jsx
+```typescript
 import { ReactCodemirror } from "react-tools-codemirror"
-import { useCallback, useEffect, useRef } from "react"
-
-import type { IEditor, IFormatOptions } from "react-tools-codemirror"
-
-// codemirror 支持的配置
-// @link {https://codemirror.net/doc/manual.html#config}
-const FormatOptions: IFormatOptions = {}
+import { format as sqlFormat } from "sql-formatter"
 
 export default function () {
-  const editor = useRef<IEditor>()
+  const editor = useRef()
 
-  const format = useCallback(() => {
-    // 直接调用codemirror实例执行format方法，
-    // 除了在这里设置格式化参数之外，也可以在逐渐的options下配置formatOptions来设置格式化参数
+  useCallback(() => {
     editor.current.format({
-      language: "sql",
-      params: {},
-      uppercase: true,
-      linesBetweenQueries: 0,
+      parser: (text: string) =>
+        sqlFormat(text, {
+          // ... sql-formatter 支持的一些参数
+        }),
     })
-  }, [editor.current])
+  }, [editor])
 
   return (
     <>
       <button onClick={format}></button>
-      <ReactCodemirror ref={editor} />
+      <ReactCodemirror
+        language="sql"
+        ref={editor}
+        langOptions={{
+          upperCaseKeywords: true,
+          // ...
+        }}
+        defaultValue="select * from a ,b ,c"
+      />
+    </>
+  )
+}
+```
+
+- 为 sql 提供额外的备选项
+
+```typescript
+import { ReactCodemirror } from "react-tools-codemirror"
+
+export default function () {
+  return (
+    <>
+      <button onClick={format}></button>
+      <ReactCodemirror
+        language="sql"
+        langOptions={{
+          // tables 会作为备选项被lang-sql接收，并在补全待选中展示出来。
+          tables: [
+            { label: "asd", type: "property" },
+            {
+              label: "bsd",
+              type: "property",
+            },
+          ],
+        }}
+        defaultValue="select * from a ,b ,c"
+      />
     </>
   )
 }

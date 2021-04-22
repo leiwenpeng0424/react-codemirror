@@ -1,6 +1,6 @@
 {
   "name": "react-tools-codemirror",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "CodeMirror wrapper",
   "main": "dist/react-tools-codemirror.js",
   "repository": "https://github.com/leiwenpeng0424/react-codemirror.git",
@@ -33,9 +33,7 @@
     "@rollup/plugin-buble": "^0.21.3",
     "@rollup/plugin-commonjs": "^18.0.0",
     "@rollup/plugin-node-resolve": "^11.2.1",
-    "@types/codemirror": "^0.0.109",
     "@types/react": "^17.0.3",
-    "codemirror": "^5.60.0",
     "cross-env": "^7.0.3",
     "prettier": "^2.2.1",
     "rollup": "^2.44.0",
@@ -44,10 +42,6 @@
     "rollup-plugin-typescript2": "^0.30.0",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.3"
-  },
-  "peerDependencies": {
-    "codemirror": "^5.60.0",
-    "sql-formatter": "^4.0.2"
   },
   "prettier": {
     "semi": false,
@@ -62,5 +56,8 @@
   "files": [
     "dist",
     "README.md"
-  ]
+  ],
+  "peerDependencies": {
+    "react": "^17.0.2"
+  }
 }

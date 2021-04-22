@@ -39,5 +39,5 @@ module.exports = {
     }),
     // process.env.NODE_ENV !== "development" && terser(),
   ].filter(Boolean),
-  external: [...Object.keys(dependencies)],
+  external: ["react", ...Object.keys(dependencies)],
 }

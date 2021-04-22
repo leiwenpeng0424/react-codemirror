@@ -1,5 +1,5 @@
 import { json } from "@codemirror/lang-json"
-import { CommonProps } from "../ReactCodemirrorNew"
+import { CommonProps } from "../ReactCodemirror"
 
 export interface JsonProps extends CommonProps {
   language: "json"

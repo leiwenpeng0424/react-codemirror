@@ -1,5 +1,5 @@
 import { LanguageSupport } from "@codemirror/language"
-import { CommonProps } from "../ReactCodemirrorNew"
+import { CommonProps } from "../ReactCodemirror"
 import {
   Cassandra,
   MSSQL,
@@ -14,20 +14,10 @@ import {
   schemaCompletion,
   SQLConfig,
 } from "@codemirror/lang-sql"
-import { ViewUpdate } from "@codemirror/view"
-import { Extension, Facet } from "@codemirror/state"
 
 export interface SqlProps extends CommonProps {
   language: "sql"
   langOptions?: SQLConfig
-}
-
-function handleFormat(): Extension {
-  // return (view: ViewUpdate) => {
-  //   return new Facet().of(() => {
-  //
-  //   })
-  // }
 }
 
 export default function sql(config: SQLConfig) {
@@ -39,7 +29,9 @@ export default function sql(config: SQLConfig) {
   return new LanguageSupport(lang.language, [
     schemaCompletion(config),
     keywordCompletion(lang, !!config.upperCaseKeywords),
-    handleFormat(),
+    // handleFormat(),
+    // StateEffect
+    // new Facet(),
   ])
 }
 

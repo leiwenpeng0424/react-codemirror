@@ -1,5 +1,5 @@
 import { javascript } from "@codemirror/lang-javascript"
-import { CommonProps } from "../ReactCodemirrorNew"
+import { CommonProps } from "../ReactCodemirror"
 
 export interface JavascriptProps extends CommonProps {
   language: "javascript"
