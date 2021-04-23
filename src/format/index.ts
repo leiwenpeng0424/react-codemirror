@@ -7,8 +7,11 @@ import {
   Transaction,
 } from "@codemirror/state"
 
+/**
+ * format 方法接受的参数
+ */
 export type FormatConfig = {
-  parser<T, O extends unknown>(text: T, configs?: O): T
+  parser(text: string): string
 }
 
 /**
@@ -47,7 +50,7 @@ function format(configs = {}) {
 }
 
 function startFormat(view: EditorView, configs: FormatConfig) {
-  const str = configs.parser(view.state.doc.toJSON().join(""))
+  const str = configs.parser(view.state.doc.toJSON().join("\n"))
 
   view.dispatch({
     annotations: formatDoc.of(str),

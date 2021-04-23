@@ -11,6 +11,7 @@
     "importHelpers": false,
 
     "declaration": true,
+    "declarationDir": "lib",
     "outDir": "dist",
     "sourceMap": true,
 

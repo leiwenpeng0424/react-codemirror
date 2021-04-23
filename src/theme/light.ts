@@ -66,6 +66,9 @@ const oneDarkTheme = EditorView.theme(
         backgroundColor: highlightBackground,
         color: ivory,
       },
+      "& > ul > li > cm-completionIcon": {
+        paddingRight: "2em",
+      },
     },
   },
   { dark: true }

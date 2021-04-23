@@ -8,9 +8,9 @@ import {
   EditorView,
   Compartment,
 } from "./setup"
-import { Extension } from "@codemirror/state"
+import { Extension, Prec } from "@codemirror/state"
 import { LanguageSupport } from "@codemirror/language"
-import type { LegacyRef } from "react"
+import type { LegacyRef, MutableRefObject } from "react"
 import React, {
   forwardRef,
   useEffect,
@@ -18,11 +18,12 @@ import React, {
   useRef,
 } from "react"
 import { useMount, useUnmount } from "./hooks/lifecycle"
+import { dequal } from "dequal"
 
 // language
 import javascript, { JavascriptProps } from "./javascript"
 import json, { JsonProps } from "./json"
-import sql, { SqlProps } from "./sql"
+import sql, { SqlProps, schemaCompletion, SQLConfig } from "./sql"
 
 // extensions
 import { viewChange } from "./extensions"
@@ -77,12 +78,20 @@ export interface CommonProps {
    * 拓展方法
    */
   extensions?: (Extension | LanguageSupport)[]
+  /**
+   * 额外的props
+   */
+  [key: string]: unknown
 }
 
 export type ReactCodemirrorProps =
   | JavascriptProps
   | JsonProps
   | SqlProps
+
+export type ReactCodemirrorRefValues = {
+  format(configs: FormatConfig): void
+}
 
 interface StaticCodemirrorProps extends CommonProps {
   editable: false
@@ -94,7 +103,7 @@ interface StaticCodemirrorProps extends CommonProps {
 
 function ReactCodemirror(
   props: ReactCodemirrorProps | StaticCodemirrorProps,
-  ref: React.Ref<{ format(configs: FormatConfig): void }>
+  ref: MutableRefObject<ReactCodemirrorRefValues>
 ) {
   const {
     extensions = [],
@@ -105,7 +114,10 @@ function ReactCodemirror(
     value,
     theme = "dark",
     editable = true,
+    ...others
   } = props
+
+  const preLangOptions = useRef(langOptions)
 
   const element = useRef<HTMLDivElement>()
 
@@ -114,6 +126,7 @@ function ReactCodemirror(
   let editableCompartment = useRef<Compartment>(new Compartment())
   let extensionsCompartment = useRef<Compartment>(new Compartment())
   let themeCompartment = useRef<Compartment>(new Compartment())
+  // let schemaCompartment = useRef<Compartment>(new Compartment())
 
   useImperativeHandle(
     ref,
@@ -128,8 +141,9 @@ function ReactCodemirror(
   useMount(() => {
     const languageEx = languageCompartment.current.of(
       [
+        // @ts-ignore
         LANGUAGE_EXTENSIONS[language](langOptions),
-        viewChange(onChange, editable),
+        // viewChange(onChange, editable),
       ].filter(Boolean)
     )
 
@@ -143,6 +157,10 @@ function ReactCodemirror(
 
     const themeEx = themeCompartment.current.of(THEMES[theme])
 
+    // const sqlSchemaEx = schemaCompartment.current.of(
+    //   schemaCompletion(langOptions as SQLConfig)
+    // )
+
     const state: EditorState = EditorState.create({
       doc: defaultValue,
       extensions: [
@@ -151,6 +169,8 @@ function ReactCodemirror(
         editoableEx,
         extensionsEx,
         themeEx,
+        // sqlSchemaEx,
+        viewChange(onChange, editable),
       ],
     })
 
@@ -162,17 +182,20 @@ function ReactCodemirror(
 
   // 1. language
   useEffect(() => {
-    editor.current.dispatch({
-      effects: [
-        languageCompartment.current.reconfigure([
-          LANGUAGE_EXTENSIONS[language](langOptions),
-        ]),
-        editableCompartment.current.reconfigure(
-          EditorView.editable.of(editable)
+    if (
+      language === "sql" &&
+      !dequal(langOptions, preLangOptions.current)
+    ) {
+      editor.current.dispatch({
+        effects: languageCompartment.current.reconfigure(
+          // @ts-ignore
+          LANGUAGE_EXTENSIONS[language](langOptions)
         ),
-      ],
-    })
-  }, [langOptions, languageCompartment, theme, editor, editable])
+      })
+
+      preLangOptions.current = langOptions
+    }
+  }, [langOptions, language])
 
   // 2. extensions
   useEffect(() => {
@@ -181,26 +204,17 @@ function ReactCodemirror(
         [...extensions].filter(Boolean)
       ),
     })
-  }, [extensionsCompartment, extensions, editor])
+  }, [extensions])
 
-  // 3. theme
+  // 3. theme, editable
   useEffect(() => {
     editor.current.dispatch({
       effects: themeCompartment.current.reconfigure([
         [THEMES[theme]].filter(Boolean),
-      ]),
-    })
-  }, [themeCompartment, theme, editor])
-
-  // 3. editable
-  useEffect(() => {
-    editor.current.dispatch({
-      effects: editableCompartment.current.reconfigure([
         EditorView.editable.of(editable),
-        viewChange(onChange, editable),
       ]),
     })
-  }, [editableCompartment, editable, onChange, editor])
+  }, [theme, editable])
 
   useEffect(() => {
     // 如果是静态的编辑器，那就把外部传入的value直接dispatch到EditorState中
@@ -219,7 +233,7 @@ function ReactCodemirror(
         ],
       })
     }
-  }, [editable, value, editor])
+  }, [editable, value])
 
   useUnmount(() => editor.current.destroy())
 
@@ -227,6 +241,7 @@ function ReactCodemirror(
     <div
       ref={element as LegacyRef<HTMLDivElement>}
       className="codemirror-editor-body"
+      {...others}
     />
   )
 }

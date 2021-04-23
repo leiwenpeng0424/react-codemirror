@@ -20,15 +20,19 @@ export interface SqlProps extends CommonProps {
   langOptions?: SQLConfig
 }
 
-export default function sql(config: SQLConfig) {
-  if (!config.schema) {
-    config.schema = {}
+export default function sql(config: SQLConfig = {}) {
+  const configs = {
+    ...config,
   }
 
-  let lang = config.dialect || StandardSQL
+  if (!configs.schema) {
+    configs.schema = {}
+  }
+
+  let lang = configs.dialect || StandardSQL
   return new LanguageSupport(lang.language, [
-    schemaCompletion(config),
-    keywordCompletion(lang, !!config.upperCaseKeywords),
+    schemaCompletion(configs),
+    keywordCompletion(lang, !!configs.upperCaseKeywords),
     // handleFormat(),
     // StateEffect
     // new Facet(),
@@ -47,4 +51,5 @@ export {
   SQLDialect,
   SQLite,
   StandardSQL,
+  schemaCompletion,
 }
