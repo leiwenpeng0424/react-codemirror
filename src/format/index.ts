@@ -11,7 +11,7 @@ import {
  * format 方法接受的参数
  */
 export type FormatConfig = {
-  parser(text: string): string
+  parser(text: string): string | Promise<string>
 }
 
 /**
