@@ -52,15 +52,17 @@ function format(configs = {}) {
 function startFormat(view: EditorView, configs: FormatConfig) {
   const str = configs.parser(view.state.doc.toJSON().join("\n"))
 
-  view.dispatch({
-    annotations: formatDoc.of(str),
-    changes: [
-      {
-        from: 0,
-        to: view.state.doc.length,
-        insert: str,
-      },
-    ],
+  Promise.resolve(str).then((resolveStr) => {
+    view.dispatch({
+      // annotations: formatDoc.of(),
+      changes: [
+        {
+          from: 0,
+          to: view.state.doc.length,
+          insert: resolveStr,
+        },
+      ],
+    })
   })
 }
 

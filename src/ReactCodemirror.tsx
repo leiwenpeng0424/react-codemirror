@@ -8,7 +8,7 @@ import {
   EditorView,
   Compartment,
 } from "./setup"
-import { Extension, Prec } from "@codemirror/state"
+import { Extension } from "@codemirror/state"
 import { LanguageSupport } from "@codemirror/language"
 import type { LegacyRef, MutableRefObject } from "react"
 import React, {
@@ -23,10 +23,10 @@ import { dequal } from "dequal"
 // language
 import javascript, { JavascriptProps } from "./javascript"
 import json, { JsonProps } from "./json"
-import sql, { SqlProps, schemaCompletion, SQLConfig } from "./sql"
+import sql, { SqlProps } from "./sql"
 
 // extensions
-import { viewChange } from "./extensions"
+import { viewChange, minimalLines } from "./extensions"
 import { startFormat, FormatConfig } from "./format"
 
 const LANGUAGE_EXTENSIONS = {
@@ -79,6 +79,10 @@ export interface CommonProps {
    */
   extensions?: (Extension | LanguageSupport)[]
   /**
+   * 默认展示的行数
+   */
+  defaultLines?: number
+  /**
    * 额外的props
    */
   [key: string]: unknown
@@ -113,6 +117,7 @@ function ReactCodemirror(
     onChange,
     value,
     theme = "dark",
+    defaultLines,
     editable = true,
     ...others
   } = props
@@ -171,6 +176,7 @@ function ReactCodemirror(
         themeEx,
         // sqlSchemaEx,
         viewChange(onChange, editable),
+        // minimalLines(defaultLines),
       ],
     })
 
