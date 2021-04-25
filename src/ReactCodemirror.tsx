@@ -224,22 +224,22 @@ function ReactCodemirror(
 
   useEffect(() => {
     // 如果是静态的编辑器，那就把外部传入的value直接dispatch到EditorState中
-    if (editable && value) {
-      return
-    }
-    if (!editable && value) {
-      const view = editor.current
-      editor.current.dispatch({
-        changes: [
-          {
-            from: 0,
-            to: view.state.doc.length,
-            insert: value,
-          },
-        ],
-      })
-    }
-  }, [editable, value])
+    // if (editable && value) {
+    //   return
+    // }
+    // if (!editable && value) {
+    // const view = editor.current
+    editor.current.dispatch({
+      changes: [
+        {
+          from: 0,
+          to: editor.current.state.doc.length,
+          insert: value,
+        },
+      ],
+    })
+    // }
+  }, [value])
 
   useUnmount(() => editor.current.destroy())
 
