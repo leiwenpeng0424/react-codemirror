@@ -8,6 +8,7 @@ import {
   EditorView,
   Compartment,
 } from "./setup"
+import { Text } from "@codemirror/text"
 import { Extension } from "@codemirror/state"
 import { LanguageSupport } from "@codemirror/language"
 import type { LegacyRef, MutableRefObject } from "react"
@@ -80,6 +81,7 @@ export interface CommonProps {
   extensions?: (Extension | LanguageSupport)[]
   /**
    * 默认展示的行数
+   * @private
    */
   defaultLines?: number
   /**
@@ -222,23 +224,45 @@ function ReactCodemirror(
     })
   }, [theme, editable])
 
+  const isSameTextAccordingToDoc = (
+    editor: EditorView,
+    value: string
+  ): boolean => {
+    const doc = editor.state.doc.toJSON()
+    const nextDocText = value.split(editor.state.lineBreak)
+
+    if (doc.length !== nextDocText.length) {
+      return false
+    }
+
+    let i = doc.length - 1
+
+    while (i >= 0) {
+      if (doc[i] !== nextDocText[i]) {
+        return false
+      }
+
+      i--
+    }
+
+    return true
+  }
+
   useEffect(() => {
     // 如果是静态的编辑器，那就把外部传入的value直接dispatch到EditorState中
-    // if (editable && value) {
-    //   return
-    // }
-    // if (!editable && value) {
-    // const view = editor.current
-    editor.current.dispatch({
-      changes: [
-        {
-          from: 0,
-          to: editor.current.state.doc.length,
-          insert: value,
-        },
-      ],
-    })
-    // }
+    if (!isSameTextAccordingToDoc(editor.current, value)) {
+      editor.current.dispatch({
+        changes: [
+          {
+            from: 0,
+            to: editor.current.state.doc.length,
+            insert: Text.of(
+              value.split(editor.current.state.lineBreak)
+            ),
+          },
+        ],
+      })
+    }
   }, [value])
 
   useUnmount(() => editor.current.destroy())
