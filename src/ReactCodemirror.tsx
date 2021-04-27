@@ -226,7 +226,7 @@ function ReactCodemirror(
 
   const isSameTextAccordingToDoc = (
     editor: EditorView,
-    value: string
+    value: string = ""
   ): boolean => {
     const doc = editor.state.doc.toJSON()
     const nextDocText = value.split(editor.state.lineBreak)

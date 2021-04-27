@@ -1,3 +1,3 @@
-# features
+# enhance
 
-- 编辑控制
+- 优化update事件的执行频率
