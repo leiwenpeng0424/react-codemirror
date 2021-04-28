@@ -256,9 +256,7 @@ function ReactCodemirror(
           {
             from: 0,
             to: editor.current.state.doc.length,
-            insert: Text.of(
-              value.split(editor.current.state.lineBreak)
-            ),
+            insert: value
           },
         ],
       })
