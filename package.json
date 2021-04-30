@@ -1,6 +1,6 @@
 {
   "name": "react-tools-codemirror",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "CodeMirror wrapper",
   "main": "dist/react-tools-codemirror.js",
   "repository": "https://github.com/leiwenpeng0424/react-codemirror.git",

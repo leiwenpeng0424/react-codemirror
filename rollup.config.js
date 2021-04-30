@@ -23,7 +23,7 @@ module.exports = {
         forOf: false,
       },
     }),
-    process.env.NODE_ENV !== "development" && terser(),
+    // process.env.NODE_ENV !== "development" && terser(),
   ].filter(Boolean),
   external: ["react", ...Object.keys(dependencies)],
 }

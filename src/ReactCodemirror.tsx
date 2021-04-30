@@ -28,6 +28,7 @@ import sql, { SqlProps } from "./sql"
 
 // extensions
 import { viewChange, minimalLines } from "./extensions"
+import minimap from "./extensions/minimap"
 import { startFormat, FormatConfig } from "./format"
 
 const LANGUAGE_EXTENSIONS = {
@@ -179,6 +180,7 @@ function ReactCodemirror(
         // sqlSchemaEx,
         viewChange(onChange, editable),
         // minimalLines(defaultLines),
+        minimap(),
       ],
     })
 
@@ -256,7 +258,7 @@ function ReactCodemirror(
           {
             from: 0,
             to: editor.current.state.doc.length,
-            insert: value
+            insert: value,
           },
         ],
       })
