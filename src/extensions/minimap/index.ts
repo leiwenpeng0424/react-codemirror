@@ -75,7 +75,11 @@ const minimapPlugin = ViewPlugin.fromClass(
 
           console.log(node.childNodes)
 
-          this.dom.getContext("2d").fillRect(1, 1, 100, 1)
+          node.childNodes.forEach((child) => {
+            // child.
+          })
+
+          //   this.dom.getContext("2d").fillRect(1, 1, 100, 1)
           this.lineCache.set(index, line.text)
         }
 

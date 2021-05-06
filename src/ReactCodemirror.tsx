@@ -8,7 +8,6 @@ import {
   EditorView,
   Compartment,
 } from "./setup"
-import { Text } from "@codemirror/text"
 import { Extension } from "@codemirror/state"
 import { LanguageSupport } from "@codemirror/language"
 import type { LegacyRef, MutableRefObject } from "react"
@@ -22,7 +21,7 @@ import { useMount, useUnmount } from "./hooks/lifecycle"
 import { dequal } from "dequal"
 
 // language
-import javascript, { JavascriptProps } from "./javascript"
+import javascript, { JavascriptProps, esLint } from "./javascript"
 import json, { JsonProps } from "./json"
 import sql, { SqlProps } from "./sql"
 
@@ -37,9 +36,44 @@ const LANGUAGE_EXTENSIONS = {
   json,
 }
 
+type LineOffset = {
+  EndLine: number
+  EndOffset: number
+  StartLine: number
+  StartOffset: number
+}
+
+type DiagnosticItem = {
+  error: string
+  errorCode: number
+  lineOffsets: LineOffset[]
+}
+
+type DiagnosticResult = {
+  checkItems: DiagnosticItem[]
+  rawSQL: string
+}
+
+export interface ExtraDiagnostic {
+  checkNo?: string
+  checkResult: DiagnosticResult
+  funcOSSList?: unknown[]
+  parsedTableResult?: {
+    funcs?: string | null
+    inCSVs?: string | null
+    inHbases?: unknown[]
+    inRDBs?: unknown[]
+    kafkaItem?: unknown[]
+    sinkKafkas?: unknown[]
+  }
+  withFunc?: boolean
+}
+
 //theme
 import { oneDark as dark } from "./theme/dark"
 import { oneDark as light } from "./theme/light"
+import { setDiagnostics } from "@codemirror/lint"
+import { translateDiagnostics } from "./utils"
 
 const THEMES = {
   dark,
@@ -66,6 +100,7 @@ export interface CommonProps {
    * @deprecated
    */
   extraCompletions?:
+    | ExtraDiagnostic
     | string[]
     | ((word: string) => string[] | Promise<string[]>)
   /**
@@ -85,6 +120,10 @@ export interface CommonProps {
    * @private
    */
   defaultLines?: number
+  /**
+   * @description 额外的错误提示。可以从接口获取，在editor中渲染
+   */
+  diagnostics?: ExtraDiagnostic
   /**
    * 额外的props
    */
@@ -122,6 +161,7 @@ function ReactCodemirror(
     theme = "dark",
     defaultLines,
     editable = true,
+    diagnostics,
     ...others
   } = props
 
@@ -135,6 +175,7 @@ function ReactCodemirror(
   let extensionsCompartment = useRef<Compartment>(new Compartment())
   let themeCompartment = useRef<Compartment>(new Compartment())
   // let schemaCompartment = useRef<Compartment>(new Compartment())
+  let sqlLinter = useRef<Compartment>(new Compartment())
 
   useImperativeHandle(
     ref,
@@ -151,7 +192,6 @@ function ReactCodemirror(
       [
         // @ts-ignore
         LANGUAGE_EXTENSIONS[language](langOptions),
-        // viewChange(onChange, editable),
       ].filter(Boolean)
     )
 
@@ -177,9 +217,7 @@ function ReactCodemirror(
         editoableEx,
         extensionsEx,
         themeEx,
-        // sqlSchemaEx,
         viewChange(onChange, editable),
-        // minimalLines(defaultLines),
         minimap(),
       ],
     })
@@ -264,6 +302,22 @@ function ReactCodemirror(
       })
     }
   }, [value])
+
+  /**
+   * @description 监听变化的lint信息，同步到editor
+   */
+  useEffect(() => {
+    if (!diagnostics) {
+      return
+    }
+
+    editor.current.dispatch(
+      setDiagnostics(
+        editor.current.state,
+        translateDiagnostics(diagnostics, editor.current)
+      )
+    )
+  }, [diagnostics])
 
   useUnmount(() => editor.current.destroy())
 

@@ -14,6 +14,8 @@ import {
   schemaCompletion,
   SQLConfig,
 } from "@codemirror/lang-sql"
+import { EditorView } from "@codemirror/view"
+import { Facet, StateField } from "@codemirror/state"
 
 export interface SqlProps extends CommonProps {
   language: "sql"
@@ -33,9 +35,6 @@ export default function sql(config: SQLConfig = {}) {
   return new LanguageSupport(lang.language, [
     schemaCompletion(configs),
     keywordCompletion(lang, !!configs.upperCaseKeywords),
-    // handleFormat(),
-    // StateEffect
-    // new Facet(),
   ])
 }
 
