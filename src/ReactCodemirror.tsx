@@ -21,13 +21,12 @@ import { useMount, useUnmount } from "./hooks/lifecycle"
 import { dequal } from "dequal"
 
 // language
-import javascript, { JavascriptProps, esLint } from "./javascript"
+import javascript, { JavascriptProps } from "./javascript"
 import json, { JsonProps } from "./json"
 import sql, { SqlProps } from "./sql"
 
 // extensions
-import { viewChange, minimalLines } from "./extensions"
-import minimap from "./extensions/minimap"
+import { viewChange, minimap } from "./extensions"
 import { startFormat, FormatConfig } from "./format"
 
 const LANGUAGE_EXTENSIONS = {
@@ -73,6 +72,8 @@ export interface ExtraDiagnostic {
 import { oneDark as dark } from "./theme/dark"
 import { oneDark as light } from "./theme/light"
 import { setDiagnostics } from "@codemirror/lint"
+
+// utils
 import { translateDiagnostics } from "./utils"
 
 const THEMES = {
@@ -164,19 +165,13 @@ function ReactCodemirror(
     diagnostics,
     ...others
   } = props
-
   const preLangOptions = useRef(langOptions)
-
   const element = useRef<HTMLDivElement>()
-
   let editor = useRef<EditorView>()
   let languageCompartment = useRef<Compartment>(new Compartment())
   let editableCompartment = useRef<Compartment>(new Compartment())
   let extensionsCompartment = useRef<Compartment>(new Compartment())
   let themeCompartment = useRef<Compartment>(new Compartment())
-  // let schemaCompartment = useRef<Compartment>(new Compartment())
-  let sqlLinter = useRef<Compartment>(new Compartment())
-
   useImperativeHandle(
     ref,
     () => ({
@@ -186,7 +181,6 @@ function ReactCodemirror(
     }),
     [editor]
   )
-
   useMount(() => {
     const languageEx = languageCompartment.current.of(
       [
@@ -194,21 +188,13 @@ function ReactCodemirror(
         LANGUAGE_EXTENSIONS[language](langOptions),
       ].filter(Boolean)
     )
-
     const editoableEx = editableCompartment.current.of(
       EditorView.editable.of(editable)
     )
-
     const extensionsEx = extensionsCompartment.current.of(
       extensions.filter(Boolean)
     )
-
     const themeEx = themeCompartment.current.of(THEMES[theme])
-
-    // const sqlSchemaEx = schemaCompartment.current.of(
-    //   schemaCompletion(langOptions as SQLConfig)
-    // )
-
     const state: EditorState = EditorState.create({
       doc: defaultValue,
       extensions: [
@@ -218,7 +204,7 @@ function ReactCodemirror(
         extensionsEx,
         themeEx,
         viewChange(onChange, editable),
-        minimap(),
+        // minimap(),
       ],
     })
 

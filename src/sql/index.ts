@@ -14,8 +14,6 @@ import {
   schemaCompletion,
   SQLConfig,
 } from "@codemirror/lang-sql"
-import { EditorView } from "@codemirror/view"
-import { Facet, StateField } from "@codemirror/state"
 
 export interface SqlProps extends CommonProps {
   language: "sql"

@@ -52,6 +52,7 @@ const minimapPlugin = ViewPlugin.fromClass(
       const config = view.state.facet(minimapConfig)
       this.render(view)
     }
+
     update(view: ViewUpdate) {
       if (!view.docChanged) {
         return
@@ -65,23 +66,10 @@ const minimapPlugin = ViewPlugin.fromClass(
         const line = view.state.doc.line(index + 1)
         const cache = this.lineCache.get(index)
 
-        // 相等，就不重绘了。
-        if (cache !== line.text) {
-          // view.state.
-          // 计算绘制的矩形的大小，可以通过比例来计算，ratio = (editor.height / editor)
-          const { node, offset } = view.view.domAtPos(index + 1)
+        // console.log(view.view.visualLineAt(line.from))
+        // console.log(view.view.domAtPos(line.from))
 
-          console.log(node, offset)
-
-          console.log(node.childNodes)
-
-          node.childNodes.forEach((child) => {
-            // child.
-          })
-
-          //   this.dom.getContext("2d").fillRect(1, 1, 100, 1)
-          this.lineCache.set(index, line.text)
-        }
+        this.lineCache.set(index, line.text)
 
         index++
       }
