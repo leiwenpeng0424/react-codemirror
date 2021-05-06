@@ -204,7 +204,7 @@ function ReactCodemirror(
         extensionsEx,
         themeEx,
         viewChange(onChange, editable),
-        // minimap(),
+        minimap,
       ],
     })
 

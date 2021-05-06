@@ -1,6 +1,13 @@
-import { EditorView, ViewPlugin, ViewUpdate } from "@codemirror/view"
-import { Extension, Facet } from "@codemirror/state"
-import { Line } from "@codemirror/text"
+import { showPanel, Panel } from "@codemirror/panel"
+import {
+  Facet,
+  StateEffect,
+  StateField,
+  Transaction,
+} from "@codemirror/state"
+import { EditorView, ViewUpdate } from "@codemirror/view"
+import Minimap from "./minimap"
+// import { CanvasElement, Viewbox, MinimapElement } from "./elements"
 
 /**
  * - minimap
@@ -11,89 +18,84 @@ import { Line } from "@codemirror/text"
  */
 
 type MinimapConfig = {
-  // minimap插件会在插入到editor的dom结构中，
-  // 使用这个选项来确认是否生成minimal
+  /// minimap插件会在插入到editor的dom结构中，
+  /// 使用这个选项来确认是否生成minimal
   minimap?: boolean
-  // 是否在minimap中展示精确的文字，或者只是展示颜色块
-  explicit?: boolean
-  // minimap在editor中展示的位置，左或者右
-  left?: boolean
+  /// minimap的宽度
+  minimapWidth?: number
+  /// minimap在editor中展示的位置
+  minimapSide?: "left" | "right"
 }
 
-// 定义minimapConfig facet
 const minimapConfig = Facet.define<MinimapConfig, MinimapConfig>({
-  combine(configs: readonly MinimapConfig[]): MinimapConfig {
-    let minimap
-    let explicit
-    let left
+  combine(configs: MinimapConfig[]) {
+    let minimap: boolean,
+      minimapWidth: number,
+      minimapSide: "left" | "right"
 
-    for (const c of configs) {
-      minimap = c.minimap
-      explicit = c.explicit
-      left = c.left
+    for (const config of configs) {
+      minimap = config.minimap
+      minimapWidth = config.minimapWidth
+      minimapSide = config.minimapSide
     }
 
-    return { minimap, explicit, left }
+    return {
+      minimap,
+      minimapSide: "right",
+      minimapWidth,
+    }
   },
 })
 
-/**
- * @public Plugin
- *
- * 使用这个Plugin在Editor中生成minimap
- */
-const minimapPlugin = ViewPlugin.fromClass(
-  class {
-    dom: HTMLCanvasElement
-    lineCache: Map<number, string>
+const createMinimapPanel = (view: EditorView): Panel => {
+  const config = view.state.facet(minimapConfig)
+  const minimapPanel = new Minimap(view)
 
-    constructor(view: EditorView) {
-      this.lineCache = new Map()
-      const config = view.state.facet(minimapConfig)
-      this.render(view)
-    }
-
-    update(view: ViewUpdate) {
-      if (!view.docChanged) {
-        return
-      }
-      let index = 0
-
-      // 遍历所有的line
-      // FIXME 最好是能够只针对变化的行进行重新绘制，边里所有的行，实在是性能太差了
-
-      while (index < view.state.doc.lines) {
-        const line = view.state.doc.line(index + 1)
-        const cache = this.lineCache.get(index)
-
-        // console.log(view.view.visualLineAt(line.from))
-        // console.log(view.view.domAtPos(line.from))
-
-        this.lineCache.set(index, line.text)
-
-        index++
-      }
-    }
-    render(view: EditorView) {
-      if (!this.dom) {
-        this.dom = document.createElement("canvas")
-        this.dom.style.background = "blue"
-        this.dom.style.height = "100%"
-        this.dom.style.width = "120px"
-        this.dom.style.position = "sticky"
-        this.dom.style.right = "2px"
-        this.dom.style.top = "0"
-        this.dom.style.bottom = "0"
-        this.dom.style.boxShadow = "red 0px 7px 5px"
-        view.scrollDOM.appendChild(this.dom)
-      }
-    }
-    // 给格子上色
-    syntax({ from, to, color }) {}
-  },
-  {}
-)
-
-export default function minimap(): Extension {
-  return [minimapPlugin]
+  return {
+    top: true,
+    dom: minimapPanel.minimap.node,
+    update(update: ViewUpdate) {},
+    mount() {
+      view.requestMeasure({
+        write() {},
+        read(view) {
+          minimapPanel.resize(
+            config.minimapWidth || 84,
+            view.contentHeight
+          )
+          minimapPanel.detach().attach()
+          minimapPanel.minimap.setSide(config.minimapSide)
+        },
+      })
+    },
+  }
 }
+
+const toggleMinimap = StateEffect.define<boolean>()
+
+const minimap = StateField.define<boolean>({
+  create() {
+    return true
+  },
+  update(update, tr: Transaction) {
+    for (let e of tr.effects)
+      if (e.is(toggleMinimap)) update = e.value
+
+    return update
+  },
+  provide(field) {
+    return showPanel.from(field, (show) =>
+      show ? createMinimapPanel : null
+    )
+  },
+})
+
+export default [
+  minimap,
+  EditorView.theme({
+    ".cm-panel": {
+      backgroundColor: "#21252b",
+      color: "#abb2bf",
+    },
+  }),
+]

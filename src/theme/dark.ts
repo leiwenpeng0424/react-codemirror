@@ -25,7 +25,7 @@ const oneDarkTheme = EditorView.theme(
       backgroundColor: background,
       "& ::selection": { backgroundColor: selection },
       caretColor: cursor,
-      height: '100%'
+      height: "100%",
     },
     "&.cm-focused .cm-cursor": { borderLeftColor: cursor },
     "&.cm-focused .cm-selectionBackground, .cm-selectionBackground": {
