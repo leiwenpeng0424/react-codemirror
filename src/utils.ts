@@ -58,3 +58,27 @@ export const translateDiagnostics = (
 
   return found
 }
+
+export const isSameTextAccordingToDoc = (
+  editor: EditorView,
+  value: string = ""
+): boolean => {
+  const doc = editor.state.doc.toJSON()
+  const nextDocText = value.split(editor.state.lineBreak)
+
+  if (doc.length !== nextDocText.length) {
+    return false
+  }
+
+  let i = doc.length - 1
+
+  while (i >= 0) {
+    if (doc[i] !== nextDocText[i]) {
+      return false
+    }
+
+    i--
+  }
+
+  return true
+}

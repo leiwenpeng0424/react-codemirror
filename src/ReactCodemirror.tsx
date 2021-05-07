@@ -74,7 +74,10 @@ import { oneDark as light } from "./theme/light"
 import { setDiagnostics } from "@codemirror/lint"
 
 // utils
-import { translateDiagnostics } from "./utils"
+import {
+  isSameTextAccordingToDoc,
+  translateDiagnostics,
+} from "./utils"
 
 const THEMES = {
   dark,
@@ -249,30 +252,6 @@ function ReactCodemirror(
       ]),
     })
   }, [theme, editable])
-
-  const isSameTextAccordingToDoc = (
-    editor: EditorView,
-    value: string = ""
-  ): boolean => {
-    const doc = editor.state.doc.toJSON()
-    const nextDocText = value.split(editor.state.lineBreak)
-
-    if (doc.length !== nextDocText.length) {
-      return false
-    }
-
-    let i = doc.length - 1
-
-    while (i >= 0) {
-      if (doc[i] !== nextDocText[i]) {
-        return false
-      }
-
-      i--
-    }
-
-    return true
-  }
 
   useEffect(() => {
     // 如果是静态的编辑器，那就把外部传入的value直接dispatch到EditorState中

@@ -8,5 +8,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="guide-demo" />
+    <orderEntry type="module" module-name="webapp-dmp" />
   </component>
 </module>
