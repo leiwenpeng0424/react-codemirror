@@ -1,6 +1,7 @@
 import { EditorView } from "@codemirror/view"
 import { Line } from "@codemirror/text"
 import { Tree } from "lezer"
+import { getStyle } from "../../utils"
 
 const SpecialChars = [
   "(",
@@ -19,9 +20,10 @@ export const LineHeight = 1
 export const WordGap = 5
 
 interface Token {
-  from: number
-  to: number
-  number: number
+  from?: number
+  to?: number
+  number?: number
+  color?: string
   text: string
 }
 
@@ -60,16 +62,24 @@ export class Drawer {
     }
 
     const tokens = text.split(/\s/)
+
     // reset prev token
     this.posX = null
     tokens.forEach((token, index) => {
-      const tokenOffset = tokens.slice(0, index).join(" ").length
+      const pos = from + line.text.indexOf(token) + 1
+      let color
+
+      const { node } = this.view.domAtPos(pos)
+
+      // TextNode
+      if (node.nodeType === 3) {
+        color = getStyle(node.parentElement, "color")
+      }
+
       this.drawToken(
         line,
         {
-          from: line.from + tokenOffset,
-          to: line.from + tokenOffset + token.length,
-          number: index,
+          color,
           text: token,
         },
         offset
@@ -79,7 +89,7 @@ export class Drawer {
 
   /// 处理单个字符
   private drawToken(line: Line, token: Token, offset) {
-    let color = "yellow",
+    let color = token.color || "white",
       length: number,
       x: number,
       y: number

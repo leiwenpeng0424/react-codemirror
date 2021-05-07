@@ -1,4 +1,3 @@
-import { EditorState } from "@codemirror/state"
 import { EditorView } from "@codemirror/view"
 import { CanvasElement, MinimapElement, Viewbox } from "./elements"
 import { Drawer } from "./drawer"

@@ -56,7 +56,6 @@ const createMinimapPanel = (view: EditorView): Panel => {
     dom: minimapPanel.minimap.node,
     update(update: ViewUpdate) {
       if (update.docChanged) {
-        console.log(update.view.state.doc.toJSON())
         minimapPanel.drawer.clear(
           0,
           0,
