@@ -265,6 +265,7 @@ function ReactCodemirror(
           },
         ],
       })
+      // editor.current.scrollPosIntoView()
     }
   }, [value])
 
@@ -282,6 +283,7 @@ function ReactCodemirror(
         translateDiagnostics(diagnostics, editor.current)
       )
     )
+    // TODO 滚动视窗到错误的位置。
   }, [diagnostics])
 
   useUnmount(() => editor.current.destroy())

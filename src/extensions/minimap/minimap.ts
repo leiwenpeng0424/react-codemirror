@@ -15,8 +15,6 @@ export default class Minimap {
     this.canvas = new CanvasElement(this.minimap.node)
     this.viewbox = new Viewbox(this.minimap.node)
     this.drawer = new Drawer(view, this.canvas.ctx)
-    /// disable minimap container scroll
-    // this.view.contentDOM.style.overflow = "hidden"
   }
 
   resize(width: number, height: number) {
@@ -39,5 +37,9 @@ export default class Minimap {
   attach() {
     this.view.dom.appendChild(this.minimap.node)
     return this
+  }
+
+  render(view?: EditorView) {
+    this.drawer.draw(view ? view : this.view)
   }
 }

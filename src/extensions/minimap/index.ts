@@ -40,9 +40,9 @@ const minimapConfig = Facet.define<MinimapConfig, MinimapConfig>({
     }
 
     return {
-      minimap,
-      minimapSide: "right",
-      minimapWidth,
+      minimap: minimap,
+      minimapSide: minimapSide || "left",
+      minimapWidth: minimapWidth || 80,
     }
   },
 })
@@ -54,17 +54,31 @@ const createMinimapPanel = (view: EditorView): Panel => {
   return {
     top: true,
     dom: minimapPanel.minimap.node,
-    update(update: ViewUpdate) {},
+    update(update: ViewUpdate) {
+      if (update.docChanged) {
+        console.log(update.view.state.doc.toJSON())
+        minimapPanel.drawer.clear(
+          0,
+          0,
+          config.minimapWidth * 5,
+          view.dom.clientHeight
+        )
+        minimapPanel.render(update.view)
+      }
+    },
     mount() {
       view.requestMeasure({
-        write() {},
+        write() {
+          // FIXME 读取minimap是否是打开状态，是的话，才进行read方法里面的操作
+        },
         read(view) {
           minimapPanel.resize(
-            config.minimapWidth || 84,
-            view.contentHeight
+            config.minimapWidth,
+            view.dom.clientHeight
           )
           minimapPanel.detach().attach()
           minimapPanel.minimap.setSide(config.minimapSide)
+          minimapPanel.render()
         },
       })
     },

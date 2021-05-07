@@ -38,7 +38,7 @@ export class Viewbox {
 
 export class CanvasElement {
   node: HTMLCanvasElement
-  ctx: RenderingContext
+  ctx: CanvasRenderingContext2D
   constructor(parent: HTMLElement) {
     this.initLayer()
     this.attachCanvasLayer(parent)
