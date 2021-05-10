@@ -61,8 +61,7 @@ export class Drawer {
     const textIter = doc.iter(1)
 
     while (!textIter.done) {
-      console.log(textIter.value)
-
+      // console.log(textIter.value)
       textIter.next()
     }
 

@@ -4,6 +4,7 @@
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "checkJs": false,
 
     "alwaysStrict": true,
     "jsx": "preserve",

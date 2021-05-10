@@ -8,7 +8,7 @@ import {
 import { EditorView } from "@codemirror/view"
 import { useEffect, useState } from "react"
 
-const editableCompart: Compartment = new Compartment()
+export const editableCompart: Compartment = new Compartment()
 
 function reconfigure(editable: boolean): StateEffect<unknown> {
   return editableCompart.reconfigure(EditorView.editable.of(editable))

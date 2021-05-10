@@ -5,7 +5,6 @@
 import { basicSetup, EditorState, EditorView } from "./setup"
 import { Extension } from "@codemirror/state"
 import { LanguageSupport } from "@codemirror/language"
-import type { LegacyRef } from "react"
 import React, { forwardRef, useImperativeHandle, useRef } from "react"
 import { useMount, useUnmount } from "./hooks/lifecycle"
 
@@ -15,7 +14,7 @@ import { JsonProps } from "./json"
 import { SqlProps } from "./sql"
 
 // extensions
-import { viewChange, minimap } from "./extensions"
+import minimap from "./extensions/minimap"
 import { startFormat, FormatConfig } from "./format"
 
 // feature flags
@@ -29,7 +28,9 @@ import useDiagnostics, {
   ExtraDiagnostic,
 } from "./customize-props/diagnostics"
 import useExtensionsCompart from "./customize-props/extensions"
-import useChangedValue from "./customize-props/value"
+import useChangedValue, {
+  listenValueChangeAndInvokeCallback,
+} from "./customize-props/value"
 
 export type IEditor = EditorView
 
@@ -46,7 +47,7 @@ export interface CommonProps {
    */
   extraCompletions?:
     | string[]
-    | ((word: string) => string[] | Promise<string[]>)
+    | ((completion: string) => string[] | Promise<string[]>)
   /// 可以配置的主题
   theme?: "dark" | "light"
   /// 是否可编辑
@@ -65,6 +66,7 @@ export type ReactCodemirrorProps =
   | SqlProps
 
 export type ReactCodemirrorRefValues = {
+  readonly editor?: EditorView
   format(configs: FormatConfig): void
 }
 
@@ -78,20 +80,9 @@ interface StaticCodemirrorProps extends CommonProps {
 
 function ReactCodemirror(
   props: ReactCodemirrorProps | StaticCodemirrorProps,
-  ref: LegacyRef<ReactCodemirrorRefValues>
+  ref: React.MutableRefObject<ReactCodemirrorRefValues>
 ) {
-  const {
-    extensions = [],
-    language,
-    langOptions,
-    defaultValue,
-    onChange,
-    value,
-    theme = "dark",
-    editable = true,
-    diagnostics,
-    ...others
-  } = props
+  const { defaultValue, onChange, editable = true, ...others } = props
   const element = useRef<HTMLDivElement>()
   const editor = useRef<EditorView>()
 
@@ -107,20 +98,26 @@ function ReactCodemirror(
     [editor]
   )
 
-  const themeCompart = useThemeProp(theme, editor.current)
-  const editCompart = useEditableProp(editable, editor.current)
+  const themeCompart = useThemeProp(
+    props.theme || "dark",
+    editor.current
+  )
+  const editCompart = useEditableProp(
+    props.editable != undefined ? true : props.editable,
+    editor.current
+  )
   const languageCompart = useLanguageProp(
-    language,
-    langOptions,
+    props.language,
+    props.langOptions,
     editor.current
   )
   const extensionsCompart = useExtensionsCompart(
-    extensions,
+    props.extensions || [],
     editor.current
   )
 
-  useDiagnostics(diagnostics, editor.current)
-  useChangedValue(value, editor.current)
+  useDiagnostics(props.diagnostics, editor.current)
+  useChangedValue(props.value, editor.current)
 
   useMount(() => {
     const state: EditorState = EditorState.create({
@@ -131,7 +128,7 @@ function ReactCodemirror(
         themeCompart,
         languageCompart,
         extensionsCompart,
-        VIEW_CHANGE && viewChange(onChange, editable),
+        VIEW_CHANGE && listenValueChangeAndInvokeCallback(onChange),
         MINIMAP_FLAG && minimap,
       ].filter(Boolean),
     })
@@ -145,7 +142,7 @@ function ReactCodemirror(
 
   return (
     <div
-      ref={element as LegacyRef<HTMLDivElement>}
+      ref={element}
       className="codemirror-editor-body"
       {...others}
     />
