@@ -29,8 +29,6 @@ import { commentKeymap } from "@codemirror/comment"
 import { rectangularSelection } from "@codemirror/rectangular-selection"
 import { defaultHighlightStyle } from "@codemirror/highlight"
 import { lintKeymap } from "@codemirror/lint"
-// customize
-import { format } from "./format"
 
 /// This is an extension value that just pulls together a whole lot of
 /// extensions that you might want in a basic editor. It is meant as a
@@ -81,7 +79,6 @@ const basicSetup = [
   rectangularSelection(),
   highlightActiveLine(),
   highlightSelectionMatches(),
-  format(),
   keymap.of([
     ...closeBracketsKeymap,
     ...defaultKeymap,

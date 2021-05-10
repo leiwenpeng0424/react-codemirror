@@ -29,7 +29,7 @@ export default function sql(config: SQLConfig = {}) {
     configs.schema = {}
   }
 
-  let lang = configs.dialect || StandardSQL
+  const lang = configs.dialect || StandardSQL
   return new LanguageSupport(lang.language, [
     schemaCompletion(configs),
     keywordCompletion(lang, !!configs.upperCaseKeywords),

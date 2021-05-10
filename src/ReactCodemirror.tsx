@@ -2,87 +2,36 @@
  * 对 codemirror6 的封装
  */
 
-import {
-  basicSetup,
-  EditorState,
-  EditorView,
-  Compartment,
-} from "./setup"
+import { basicSetup, EditorState, EditorView } from "./setup"
 import { Extension } from "@codemirror/state"
 import { LanguageSupport } from "@codemirror/language"
 import type { LegacyRef, MutableRefObject } from "react"
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-} from "react"
+import React, { forwardRef, useImperativeHandle, useRef } from "react"
 import { useMount, useUnmount } from "./hooks/lifecycle"
-import { dequal } from "dequal"
 
 // language
-import javascript, { JavascriptProps } from "./javascript"
-import json, { JsonProps } from "./json"
-import sql, { SqlProps } from "./sql"
+import { JavascriptProps } from "./javascript"
+import { JsonProps } from "./json"
+import { SqlProps } from "./sql"
 
 // extensions
 import { viewChange, minimap } from "./extensions"
 import { startFormat, FormatConfig } from "./format"
 
-const LANGUAGE_EXTENSIONS = {
-  javascript,
-  sql,
-  json,
-}
+// feature flag
+import { MINIMAP_FLAG, VIEW_CHANGE } from "../feature.js"
 
-type LineOffset = {
-  EndLine: number
-  EndOffset: number
-  StartLine: number
-  StartOffset: number
-}
-
-type DiagnosticItem = {
-  error: string
-  errorCode: number
-  lineOffsets: LineOffset[]
-}
-
-type DiagnosticResult = {
-  checkItems: DiagnosticItem[]
-  rawSQL: string
-}
-
-export interface ExtraDiagnostic {
-  checkNo?: string
-  checkResult: DiagnosticResult
-  funcOSSList?: unknown[]
-  parsedTableResult?: {
-    funcs?: string | null
-    inCSVs?: string | null
-    inHbases?: unknown[]
-    inRDBs?: unknown[]
-    kafkaItem?: unknown[]
-    sinkKafkas?: unknown[]
-  }
-  withFunc?: boolean
-}
-
-//theme
-import { oneDark as dark } from "./theme/dark"
-import { oneDark as light } from "./theme/light"
-import { setDiagnostics } from "@codemirror/lint"
+// hooks for customize-props
+import useEditableProp from "./customize-props/editable"
+import useLanguageProp from "./customize-props/language"
+import useThemeProp from "./customize-props/theme"
+import useDiagnostics, {
+  ExtraDiagnostic,
+} from "./customize-props/diagnostics"
+import useExtensionsCompart from "./customize-props/extensions"
+import useChangedValue from "./customize-props/value"
 
 // utils
-import {
-  isSameTextAccordingToDoc,
-  translateDiagnostics,
-} from "./utils"
-
-const THEMES = {
-  dark,
-  light,
-}
 
 export type IEditor = EditorView
 
@@ -104,7 +53,6 @@ export interface CommonProps {
    * @deprecated
    */
   extraCompletions?:
-    | ExtraDiagnostic
     | string[]
     | ((word: string) => string[] | Promise<string[]>)
   /**
@@ -153,7 +101,7 @@ interface StaticCodemirrorProps extends CommonProps {
 
 function ReactCodemirror(
   props: ReactCodemirrorProps | StaticCodemirrorProps,
-  ref: MutableRefObject<ReactCodemirrorRefValues>
+  ref: LegacyRef<ReactCodemirrorRefValues>
 ) {
   const {
     extensions = [],
@@ -163,19 +111,16 @@ function ReactCodemirror(
     onChange,
     value,
     theme = "dark",
-    defaultLines,
     editable = true,
     diagnostics,
     ...others
   } = props
-  const preLangOptions = useRef(langOptions)
   const element = useRef<HTMLDivElement>()
-  let editor = useRef<EditorView>()
-  let languageCompartment = useRef<Compartment>(new Compartment())
-  let editableCompartment = useRef<Compartment>(new Compartment())
-  let extensionsCompartment = useRef<Compartment>(new Compartment())
-  let themeCompartment = useRef<Compartment>(new Compartment())
+  const editor = useRef<EditorView>()
+
   useImperativeHandle(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     ref,
     () => ({
       format(configs: FormatConfig) {
@@ -184,31 +129,34 @@ function ReactCodemirror(
     }),
     [editor]
   )
+
+  const themeCompart = useThemeProp(theme, editor.current)
+  const editCompart = useEditableProp(editable, editor.current)
+  const languageCompart = useLanguageProp(
+    language,
+    langOptions,
+    editor.current
+  )
+  const extensionsCompart = useExtensionsCompart(
+    extensions,
+    editor.current
+  )
+
+  useDiagnostics(diagnostics, editor.current)
+  useChangedValue(value, editor.current)
+
   useMount(() => {
-    const languageEx = languageCompartment.current.of(
-      [
-        // @ts-ignore
-        LANGUAGE_EXTENSIONS[language](langOptions),
-      ].filter(Boolean)
-    )
-    const editoableEx = editableCompartment.current.of(
-      EditorView.editable.of(editable)
-    )
-    const extensionsEx = extensionsCompartment.current.of(
-      extensions.filter(Boolean)
-    )
-    const themeEx = themeCompartment.current.of(THEMES[theme])
     const state: EditorState = EditorState.create({
       doc: defaultValue,
       extensions: [
         basicSetup,
-        languageEx,
-        editoableEx,
-        extensionsEx,
-        themeEx,
-        viewChange(onChange, editable),
-        // minimap,
-      ],
+        editCompart,
+        themeCompart,
+        languageCompart,
+        extensionsCompart,
+        VIEW_CHANGE && viewChange(onChange, editable),
+        MINIMAP_FLAG && minimap,
+      ].filter(Boolean),
     })
 
     editor.current = new EditorView({
@@ -216,81 +164,6 @@ function ReactCodemirror(
       parent: element.current,
     })
   })
-
-  // 1. language
-  useEffect(() => {
-    if (
-      language === "sql" &&
-      !dequal(langOptions, preLangOptions.current)
-    ) {
-      editor.current.dispatch({
-        effects: languageCompartment.current.reconfigure(
-          // @ts-ignore
-          LANGUAGE_EXTENSIONS[language](langOptions)
-        ),
-      })
-
-      preLangOptions.current = langOptions
-    }
-  }, [langOptions, language])
-
-  // 2. extensions
-  useEffect(() => {
-    editor.current.dispatch({
-      effects: extensionsCompartment.current.reconfigure(
-        [...extensions].filter(Boolean)
-      ),
-    })
-  }, [extensions])
-
-  // 3. theme, editable
-  useEffect(() => {
-    editor.current.dispatch({
-      effects: themeCompartment.current.reconfigure([
-        [THEMES[theme]].filter(Boolean),
-        EditorView.editable.of(editable),
-      ]),
-    })
-  }, [theme, editable])
-
-  useEffect(() => {
-    // 如果是静态的编辑器，那就把外部传入的value直接dispatch到EditorState中
-    if (!isSameTextAccordingToDoc(editor.current, value)) {
-      editor.current.dispatch({
-        changes: [
-          {
-            from: 0,
-            to: editor.current.state.doc.length,
-            insert: value,
-          },
-        ],
-      })
-      // editor.current.scrollPosIntoView()
-    }
-  }, [value])
-
-  /**
-   * @description 监听变化的lint信息，同步到editor
-   */
-  useEffect(() => {
-    if (!diagnostics) {
-      return
-    }
-
-    const founds = translateDiagnostics(diagnostics, editor.current)
-
-    const first = founds[0]
-
-    // scroll into this first diagnostric result
-    if (first) {
-      editor.current.scrollPosIntoView(first.from)
-    }
-
-    editor.current.dispatch(
-      setDiagnostics(editor.current.state, founds)
-    )
-  }, [diagnostics])
-
   useUnmount(() => editor.current.destroy())
 
   return (

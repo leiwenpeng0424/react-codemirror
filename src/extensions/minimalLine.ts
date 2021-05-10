@@ -3,9 +3,7 @@ import { Extension } from "@codemirror/state"
 
 import type { ViewUpdate } from "@codemirror/view"
 
-export default function minimalLines(
-  minLines: number = 1
-): Extension {
+export default function minimalLines(minLines = 1): Extension {
   return [
     EditorView.updateListener.of((update: ViewUpdate) => {
       const { state, view } = update
@@ -16,7 +14,7 @@ export default function minimalLines(
         const offset = minLines - currentLines
         const extraLines = []
         if (offset > 0) {
-          for (var i = offset; i > 0; i--) {
+          for (let i = offset; i > 0; i--) {
             extraLines.push("\n")
           }
         }

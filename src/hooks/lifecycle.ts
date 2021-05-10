@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react"
+import { useEffect } from "react"
 
 /**
- * @method useMount
- * @param  {()  => void} cb
+ * hooks for mount callback
+ * @param cb
+ * @returns
  */
 export function useMount(cb: () => void): void {
   useEffect(() => {
@@ -13,8 +14,9 @@ export function useMount(cb: () => void): void {
 }
 
 /**
- * @method useUnmount
- * @param  {()    => void} cb
+ * hook for unmount callback
+ * @param cb
+ * @returns
  */
 export function useUnmount(cb: () => void): void {
   useEffect(() => {

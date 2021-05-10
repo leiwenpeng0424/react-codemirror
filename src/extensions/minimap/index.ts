@@ -56,12 +56,6 @@ const createMinimapPanel = (view: EditorView): Panel => {
     dom: minimapPanel.minimap.node,
     update(update: ViewUpdate) {
       if (update.docChanged) {
-        // minimapPanel.drawer.clear(
-        //   0,
-        //   0,
-        //   config.minimapWidth * 5,
-        //   view.dom.clientHeight
-        // )
         minimapPanel.render(update.view)
       }
     },
@@ -91,7 +85,7 @@ const minimap = StateField.define<boolean>({
     return true
   },
   update(update, tr: Transaction) {
-    for (let e of tr.effects)
+    for (const e of tr.effects)
       if (e.is(toggleMinimap)) update = e.value
 
     return update

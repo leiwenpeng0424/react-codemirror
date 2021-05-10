@@ -1,4 +1,4 @@
-import { javascript, esLint } from "@codemirror/lang-javascript"
+import { javascript } from "@codemirror/lang-javascript"
 import { CommonProps } from "../ReactCodemirror"
 
 export interface JavascriptProps extends CommonProps {

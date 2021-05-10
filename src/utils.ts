@@ -1,6 +1,6 @@
 import { Diagnostic } from "@codemirror/lint"
 import { EditorView } from "@codemirror/view"
-import { ExtraDiagnostic } from "./ReactCodemirror"
+import { ExtraDiagnostic } from "./customize-props/diagnostics"
 
 export const translateDiagnostics = (
   input: ExtraDiagnostic = {
@@ -70,7 +70,7 @@ export const translateDiagnostics = (
 
 export const isSameTextAccordingToDoc = (
   editor: EditorView,
-  value: string = ""
+  value = ""
 ): boolean => {
   const doc = editor.state.doc.toJSON()
   const nextDocText = value.split(editor.state.lineBreak)

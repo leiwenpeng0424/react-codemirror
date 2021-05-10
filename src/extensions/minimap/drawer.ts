@@ -3,8 +3,6 @@ import { Line } from "@codemirror/text"
 import { Tree } from "lezer"
 import { getStyle } from "../../utils"
 import TokenCache from "./cache"
-import { syntaxTree } from "@codemirror/language"
-import { tags as t } from "@codemirror/highlight"
 
 // const SpecialChars = [
 //   "(",
@@ -68,35 +66,16 @@ export class Drawer {
       textIter.next()
     }
 
-    // console.log(doc.toJSON())
-
-    // syntaxTree(view.state).iterate({
-    //   enter: (nodeType, from, to) => {
-    //     /// 1. from/to -> line
-    //     // console.log(nodeType)
-    //     if (
-    //       nodeType.name !== "Script" &&
-    //       nodeType.name !== "Statement" &&
-    //       nodeType.name !== "Parens" &&
-    //       nodeType.name !== "Expression"
-    //     ) {
-    //       console.log(nodeType.prop("6"))
-    //     }
-    //   },
-    // })
-
-    // let index = 1
-    // while (index <= totalLines) {
-    //   const line = doc.line(index)
-
-    //   this.drawLine(line)
-    //   index++
-    // }
+    let index = 1
+    while (index <= totalLines) {
+      this.drawLine(doc.line(index))
+      index++
+    }
   }
 
   /// 处理一行的字符
   private drawLine(line: Line) {
-    const { text, length, from, to, number } = line
+    const { text, from } = line
 
     let offset = 2
     if (/^\s.*/.test(text)) {
