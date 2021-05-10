@@ -5,7 +5,7 @@
 import { basicSetup, EditorState, EditorView } from "./setup"
 import { Extension } from "@codemirror/state"
 import { LanguageSupport } from "@codemirror/language"
-import type { LegacyRef, MutableRefObject } from "react"
+import type { LegacyRef } from "react"
 import React, { forwardRef, useImperativeHandle, useRef } from "react"
 import { useMount, useUnmount } from "./hooks/lifecycle"
 
@@ -18,7 +18,7 @@ import { SqlProps } from "./sql"
 import { viewChange, minimap } from "./extensions"
 import { startFormat, FormatConfig } from "./format"
 
-// feature flag
+// feature flags
 import { MINIMAP_FLAG, VIEW_CHANGE } from "../feature.js"
 
 // hooks for customize-props
@@ -31,54 +31,31 @@ import useDiagnostics, {
 import useExtensionsCompart from "./customize-props/extensions"
 import useChangedValue from "./customize-props/value"
 
-// utils
-
 export type IEditor = EditorView
 
 export interface CommonProps {
-  /**
-   * 编辑器的值
-   */
+  /// 通过value可以修改editor内部的值
   value?: string
-  /**
-   * 编辑器初始化使用的值
-   */
+  /// 编辑器初始化使用的值
   defaultValue?: string
-  /**
-   * 编辑器内容发生变化触发的回调函数
-   */
+  /// editor内容修改触发该方法
   onChange?: (value: unknown) => void
+  /// 针对当前输入添加额外的补全候选
   /**
-   * 针对当前输入添加额外的补全候选
    * @deprecated
    */
   extraCompletions?:
     | string[]
     | ((word: string) => string[] | Promise<string[]>)
-  /**
-   * 可以配置的主题
-   */
+  /// 可以配置的主题
   theme?: "dark" | "light"
-  /**
-   * 是否可编辑
-   */
+  /// 是否可编辑
   editable?: boolean
-  /**
-   * 拓展方法
-   */
+  /// 拓展方法，或者语言
   extensions?: (Extension | LanguageSupport)[]
-  /**
-   * 默认展示的行数
-   * @private
-   */
-  defaultLines?: number
-  /**
-   * @description 额外的错误提示。可以从接口获取，在editor中渲染
-   */
+  /// 额外的错误提示。可以从接口获取，在editor中渲染
   diagnostics?: ExtraDiagnostic
-  /**
-   * 额外的props
-   */
+  /// 额外的props，例如传入样式等
   [key: string]: unknown
 }
 

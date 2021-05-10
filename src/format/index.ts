@@ -12,7 +12,6 @@ function startFormat(view: EditorView, configs: FormatConfig): void {
 
   Promise.resolve(str).then((resolveStr) => {
     view.dispatch({
-      // annotations: formatDoc.of(),
       changes: [
         {
           from: 0,
