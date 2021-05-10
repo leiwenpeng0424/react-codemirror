@@ -2,54 +2,96 @@ import { EditorView } from "@codemirror/view"
 import { Line } from "@codemirror/text"
 import { Tree } from "lezer"
 import { getStyle } from "../../utils"
+import TokenCache from "./cache"
+import { syntaxTree } from "@codemirror/language"
+import { tags as t } from "@codemirror/highlight"
 
-const SpecialChars = [
-  "(",
-  ")",
-  "{",
-  "}",
-  "[",
-  "]",
-  ",",
-  ";",
-  "-",
-  "*",
-]
+// const SpecialChars = [
+//   "(",
+//   ")",
+//   "{",
+//   "}",
+//   "[",
+//   "]",
+//   ",",
+//   ";",
+//   "-",
+//   "*",
+// ]
 
 export const LineHeight = 1
 export const WordGap = 5
 
-interface Token {
+export interface Token {
   from?: number
   to?: number
   number?: number
   color?: string
+  pos?: number
+  rect?: {
+    x: number
+    y: number
+    w: number
+    h: number
+  }
   text: string
 }
 
 export class Drawer {
   view: EditorView
   ctx: CanvasRenderingContext2D
-  tree: Tree
   posX: number
+  ///
+  tree: Tree = Tree.empty
+  cache: TokenCache
 
-  constructor(view: EditorView, ctx: CanvasRenderingContext2D) {
+  constructor(
+    view: EditorView,
+    ctx: CanvasRenderingContext2D,
+    cache: TokenCache
+  ) {
     this.view = view
     this.ctx = ctx
+    this.cache = cache
   }
 
   /// 绘制内容
   draw(view: EditorView) {
-    const tokens = []
     const doc = view.state.doc
     const totalLines = doc.lines
 
-    let index = 1
-    while (index <= totalLines) {
-      const line = doc.line(index)
-      this.drawLine(line)
-      index++
+    const textIter = doc.iter(1)
+
+    while (!textIter.done) {
+      console.log(textIter.value)
+
+      textIter.next()
     }
+
+    // console.log(doc.toJSON())
+
+    // syntaxTree(view.state).iterate({
+    //   enter: (nodeType, from, to) => {
+    //     /// 1. from/to -> line
+    //     // console.log(nodeType)
+    //     if (
+    //       nodeType.name !== "Script" &&
+    //       nodeType.name !== "Statement" &&
+    //       nodeType.name !== "Parens" &&
+    //       nodeType.name !== "Expression"
+    //     ) {
+    //       console.log(nodeType.prop("6"))
+    //     }
+    //   },
+    // })
+
+    // let index = 1
+    // while (index <= totalLines) {
+    //   const line = doc.line(index)
+
+    //   this.drawLine(line)
+    //   index++
+    // }
   }
 
   /// 处理一行的字符
@@ -58,32 +100,43 @@ export class Drawer {
 
     let offset = 2
     if (/^\s.*/.test(text)) {
-      offset = /\s+/.exec(text)[0].length + 2
+      offset = /\s+/.exec(text)[0].length + 10
     }
 
     const tokens = text.split(/\s/)
 
-    // reset prev token
+    // Reset Prev Token
     this.posX = null
+
     tokens.forEach((token, index) => {
       const pos = from + line.text.indexOf(token) + 1
       let color
 
       const { node } = this.view.domAtPos(pos)
 
-      // TextNode
-      if (node.nodeType === 3) {
-        color = getStyle(node.parentElement, "color")
-      }
-
-      this.drawToken(
-        line,
-        {
-          color,
+      const cacheToken = this.cache.get(token + String(line.number))
+      if (
+        !cacheToken ||
+        cacheToken.text !== token ||
+        cacheToken.pos !== pos ||
+        token !== ""
+      ) {
+        this.cache.set(token + String(line.number), {
           text: token,
-        },
-        offset
-      )
+          pos,
+        })
+        color = getStyle(node.parentElement, "color")
+
+        this.drawToken(
+          line,
+          {
+            color,
+            text: token,
+          },
+          offset
+        )
+        // }
+      }
     })
   }
 
@@ -96,7 +149,7 @@ export class Drawer {
 
     x = offset // token渲染的左偏移
     y = line.number + line.number * LineHeight // token渲染的上偏移
-    length = token.text.trimStart().length * 5 // token的长度
+    length = token.text.trimStart().length * 5 // token的长度，原始长度太小，增加五倍的长度
 
     if (this.posX) {
       x = this.posX + WordGap

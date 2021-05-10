@@ -24,5 +24,10 @@ module.exports = {
       },
     }),
   ].filter(Boolean),
-  external: ["react", ...Object.keys(dependencies)],
+  external: [
+    "react",
+    "lezer",
+    "lezer-tree",
+    ...Object.keys(dependencies),
+  ],
 }

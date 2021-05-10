@@ -207,7 +207,7 @@ function ReactCodemirror(
         extensionsEx,
         themeEx,
         viewChange(onChange, editable),
-        minimap,
+        // minimap,
       ],
     })
 
@@ -277,13 +277,18 @@ function ReactCodemirror(
       return
     }
 
+    const founds = translateDiagnostics(diagnostics, editor.current)
+
+    const first = founds[0]
+
+    // scroll into this first diagnostric result
+    if (first) {
+      editor.current.scrollPosIntoView(first.from)
+    }
+
     editor.current.dispatch(
-      setDiagnostics(
-        editor.current.state,
-        translateDiagnostics(diagnostics, editor.current)
-      )
+      setDiagnostics(editor.current.state, founds)
     )
-    // TODO 滚动视窗到错误的位置。
   }, [diagnostics])
 
   useUnmount(() => editor.current.destroy())

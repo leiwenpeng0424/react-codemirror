@@ -56,7 +56,16 @@ export const translateDiagnostics = (
     })
   })
 
-  return found
+  return found.sort((a, b) => {
+    if (a.from < b.from) {
+      return -1
+    }
+    if (a.from > b.from) {
+      return 1
+    }
+
+    return 0
+  })
 }
 
 export const isSameTextAccordingToDoc = (
