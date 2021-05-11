@@ -54,14 +54,14 @@ export class Drawer {
   }
 
   /// 绘制内容
-  draw(view: EditorView) {
+  draw(view: EditorView): void {
     const doc = view.state.doc
     const totalLines = doc.lines
 
     const textIter = doc.iter(1)
 
     while (!textIter.done) {
-      // console.log(textIter.value)
+      console.log(textIter)
       textIter.next()
     }
 
@@ -120,14 +120,12 @@ export class Drawer {
 
   /// 处理单个字符
   private drawToken(line: Line, token: Token, offset) {
-    let color = token.color || "white",
-      length: number,
-      x: number,
-      y: number
+    const color = token.color || "white"
+    // let length: number, x: number, y: number
 
-    x = offset // token渲染的左偏移
-    y = line.number + line.number * LineHeight // token渲染的上偏移
-    length = token.text.trimStart().length * 5 // token的长度，原始长度太小，增加五倍的长度
+    let x = offset // token渲染的左偏移
+    const y = line.number + line.number * LineHeight // token渲染的上偏移
+    const length = token.text.trimStart().length * 5 // token的长度，原始长度太小，增加五倍的长度
 
     if (this.posX) {
       x = this.posX + WordGap

@@ -8,7 +8,7 @@ export type FormatConfig = {
 }
 
 function startFormat(view: EditorView, configs: FormatConfig): void {
-  const str = configs.parser(view.state.doc.toJSON().join("\n"))
+  const str = configs.parser(view.state.doc.toJSON().join(view.state.lineBreak))
 
   Promise.resolve(str).then((resolveStr) => {
     view.dispatch({
