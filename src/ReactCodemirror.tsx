@@ -82,7 +82,7 @@ function ReactCodemirror(
   props: ReactCodemirrorProps | StaticCodemirrorProps,
   ref: React.MutableRefObject<ReactCodemirrorRefValues>
 ) {
-  const { defaultValue, onChange, editable = true, ...others } = props
+  const { defaultValue, onChange, ...others } = props
   const element = useRef<HTMLDivElement>()
   const editor = useRef<EditorView>()
 
@@ -103,7 +103,7 @@ function ReactCodemirror(
     editor.current
   )
   const editCompart = useEditableProp(
-    props.editable != undefined ? true : props.editable,
+    props.editable != undefined ? props.editable : true,
     editor.current
   )
   const languageCompart = useLanguageProp(
