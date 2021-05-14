@@ -13,7 +13,7 @@
 
     "declaration": true,
     "declarationDir": "lib",
-    "outDir": "dist",
+    "outDir": "lib",
     "sourceMap": true,
 
     // style

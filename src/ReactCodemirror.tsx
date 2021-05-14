@@ -1,7 +1,6 @@
 /**
  * 对 codemirror6 的封装
  */
-
 import { basicSetup, EditorState, EditorView } from "./setup"
 import { Extension } from "@codemirror/state"
 import { LanguageSupport } from "@codemirror/language"
@@ -18,7 +17,7 @@ import minimap from "./extensions/minimap"
 import { startFormat, FormatConfig } from "./format"
 
 // feature flags
-import { MINIMAP_FLAG, VIEW_CHANGE } from "../feature.js"
+import { MINIMAP_FLAG, VIEW_CHANGE } from "../feature"
 
 // hooks for customize-props
 import useEditableProp from "./customize-props/editable"
@@ -82,7 +81,7 @@ function ReactCodemirror(
   props: ReactCodemirrorProps | StaticCodemirrorProps,
   ref: React.MutableRefObject<ReactCodemirrorRefValues>
 ) {
-  const { defaultValue, onChange, ...others } = props
+  const { onChange, ...others } = props
   const element = useRef<HTMLDivElement>()
   const editor = useRef<EditorView>()
 
@@ -121,7 +120,7 @@ function ReactCodemirror(
 
   useMount(() => {
     const state: EditorState = EditorState.create({
-      doc: defaultValue,
+      doc: props.defaultValue || props.value, // 同时接受defaultValue和value做为初始值
       extensions: [
         basicSetup,
         editCompart,
