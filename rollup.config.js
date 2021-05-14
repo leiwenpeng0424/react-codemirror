@@ -18,7 +18,9 @@ module.exports = {
     eslint({
       exclude: ["./dist"],
     }),
-    ts(),
+    ts({
+      useTsconfigDeclarationDir: true,
+    }),
     nodeResolve(),
     commonjs({
       include: "node_modules/**",

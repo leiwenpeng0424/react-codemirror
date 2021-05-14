@@ -5,7 +5,7 @@
   "description": "CodeMirror wrapper",
   "main": "dist/react-tools-codemirror.js",
   "repository": "https://github.com/leiwenpeng0424/react-codemirror.git",
-  "author": "ray",
+  "author": "leiwenpeng",
   "license": "MIT",
   "private": false,
   "dependencies": {
@@ -57,7 +57,7 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c && yarn api",
     "dev": "cross-env NODE_ENV=development rollup -cw",
-    "api": "api-extractor run --local --verbose && ts-node ./scripts/api-extractor/cleanup-tsc-generated-dts.ts",
+    "api": "api-extractor run --local --verbose",
     "release": "yarn build && npm publish"
   },
   "files": [

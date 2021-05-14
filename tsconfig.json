@@ -12,7 +12,7 @@
     "importHelpers": false,
 
     "declaration": true,
-    "declarationDir": "lib",
+    "declarationDir": "temp",
     "outDir": "lib",
     "sourceMap": true,
 
