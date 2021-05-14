@@ -120,7 +120,7 @@ function ReactCodemirror(
 
   useMount(() => {
     const state: EditorState = EditorState.create({
-      doc: props.defaultValue || props.value, // 同时接受defaultValue和value做为初始值
+      doc: props.defaultValue || props.value || "", // 同时接受defaultValue和value做为初始值
       extensions: [
         basicSetup,
         editCompart,
