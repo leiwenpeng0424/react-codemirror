@@ -23,10 +23,9 @@ export default function useExtensionsProp(
   )
 
   useEffect(() => {
-    view &&
-      view.dispatch({
-        effects: [reconfigure(extensions)],
-      })
+    view?.dispatch({
+      effects: [reconfigure(extensions)],
+    })
   }, [extensions, view])
 
   return compart
