@@ -17,7 +17,7 @@ import minimap from "./extensions/minimap"
 import { startFormat, FormatConfig } from "./format"
 
 // feature flags
-import { MINIMAP_FLAG, VIEW_CHANGE } from "../feature"
+import { MINIMAP_FLAG, VIEW_CHANGE } from "./features"
 
 // hooks for customize-props
 import useEditableProp from "./customize-props/editable"
@@ -81,7 +81,7 @@ function ReactCodemirror(
   props: ReactCodemirrorProps | StaticCodemirrorProps,
   ref: React.MutableRefObject<ReactCodemirrorRefValues>
 ) {
-  const { onChange, ...others } = props
+  const { onChange } = props
   const element = useRef<HTMLDivElement>()
   const editor = useRef<EditorView>()
 
@@ -101,15 +101,18 @@ function ReactCodemirror(
     props.theme || "dark",
     editor.current
   )
+
   const editCompart = useEditableProp(
     props.editable != undefined ? props.editable : true,
     editor.current
   )
+
   const languageCompart = useLanguageProp(
     props.language,
     props.langOptions,
     editor.current
   )
+
   const extensionsCompart = useExtensionsCompart(
     props.extensions || [],
     editor.current
@@ -143,7 +146,10 @@ function ReactCodemirror(
     <div
       ref={element}
       className="codemirror-editor-body"
-      {...others}
+      style={props.styles}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore 接受css属性，兼容 @emotion/react 的属性
+      css={props.css}
     />
   )
 }

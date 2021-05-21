@@ -33,10 +33,9 @@ export default function useThemeProp(
   )
 
   useEffect(() => {
-    view &&
-      view.dispatch({
-        effects: [reconfigure(theme)],
-      })
+    view?.dispatch({
+      effects: [reconfigure(theme)],
+    })
   }, [theme, view])
 
   return compart

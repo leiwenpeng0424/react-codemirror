@@ -1,23 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "moduleResolution": "Node",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "checkJs": false,
-
-    "alwaysStrict": true,
-    "jsx": "preserve",
-    "allowSyntheticDefaultImports": true,
-    "importHelpers": false,
-
-    "declaration": true,
-    "declarationDir": "temp",
-    "outDir": "lib",
-    "sourceMap": true,
-
-    // style
-    "noImplicitReturns": true
-  },
-  "include": ["src/*"]
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true
+  }
 }

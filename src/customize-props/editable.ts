@@ -23,10 +23,9 @@ export default function useEditableProp(
   )
 
   useEffect(() => {
-    view &&
-      view.dispatch({
-        effects: [reconfigure(value)],
-      })
+    view?.dispatch({
+      effects: [reconfigure(value)],
+    })
   }, [value, view])
 
   return compart
