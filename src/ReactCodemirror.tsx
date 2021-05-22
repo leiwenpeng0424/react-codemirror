@@ -132,7 +132,7 @@ function ReactCodemirror(
         extensionsCompart,
         VIEW_CHANGE && listenValueChangeAndInvokeCallback(onChange),
         MINIMAP_FLAG && minimap,
-      ].filter(Boolean),
+      ].filter(Boolean) as Extension,
     })
 
     editor.current = new EditorView({
