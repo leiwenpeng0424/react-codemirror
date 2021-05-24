@@ -20,12 +20,8 @@ export const translateDiagnostics = (
     const { error, errorCode, lineOffsets } = item
 
     lineOffsets.forEach((lineOffset) => {
-      const {
-        StartLine,
-        EndLine,
-        StartOffset,
-        EndOffset,
-      } = lineOffset
+      const { StartLine, EndLine, StartOffset, EndOffset } =
+        lineOffset
 
       let from: number, to: number
 
@@ -92,8 +88,8 @@ export const isSameTextAccordingToDoc = (
   return true
 }
 
-export function getStyle(element, attr): string {
-  return window.getComputedStyle
-    ? window.getComputedStyle(element, null)[attr]
-    : element.currentStyle[attr]
+export function getStyle(element: Element, attr: string): string {
+  return (
+    (window?.getComputedStyle(element, null)[attr] as string) ?? ""
+  )
 }

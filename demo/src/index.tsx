@@ -2,18 +2,6 @@ import * as React from "react"
 import * as ReactDOM from "react-dom"
 import { ReactCodemirror } from "../../dist/index"
 
-import { EditorView } from "@codemirror/view"
-
-/// tesing extension props
-const ex = EditorView.updateListener.of(({ docChanged, state }) => {
-  if (docChanged) {
-    console.log(
-      "from outside extension",
-      state.doc.toJSON().join(state.lineBreak)
-    )
-  }
-})
-
 // `class`, `constant`, `enum`,
 // `function`, `interface`, `keyword`, `method`,
 // `namespace`, `property`, `text`, `type`, `variable`
@@ -23,7 +11,14 @@ const App: React.FC<Record<string | number, never>> = () => {
     <ReactCodemirror
       language="sql"
       style={{ height: 500 }}
-      extensions={[ex]}
+      placeholder={[
+        "Example1: SELECT * FROM AAA",
+        "Example2: SELECT * FROM BBB",
+        "Example3: SELECT * FROM CCC",
+        "Example4: SELECT * FROM DDD",
+        "Example5: SELECT * FROM EEE",
+        "Example6: SELECT * FROM FFF",
+      ]}
       langOptions={{
         schema: {
           tableA: [
