@@ -52,8 +52,9 @@ export default function useLanguageProp(
   const [compart] = useState<Extension>(() =>
     languageCompart.of(
       LANGUAGES[language](
+        /// 有些language方法并不需要参数，所以这里会有TS的一场类型错误
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
+        // @ts-ignore
         langOptions
       )
     )

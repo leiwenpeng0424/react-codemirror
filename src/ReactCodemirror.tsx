@@ -17,7 +17,11 @@ import minimap from "./extensions/minimap"
 import { startFormat, FormatConfig } from "./format"
 
 // feature flags
-import { MINIMAP_FLAG, VIEW_CHANGE } from "./features"
+import {
+  MINIMAP_FLAG,
+  VIEW_CHANGE,
+  PLACEHOLDER_FLAG,
+} from "./features"
 
 // hooks for customize-props
 import useEditableProp from "./customize-props/editable"
@@ -30,6 +34,7 @@ import useExtensionsCompart from "./customize-props/extensions"
 import useChangedValue, {
   listenValueChangeAndInvokeCallback,
 } from "./customize-props/value"
+import usePlaceholderProp from "./customize-props/placeholer"
 
 export type IEditor = EditorView
 
@@ -55,7 +60,8 @@ export interface CommonProps {
   extensions?: (Extension | LanguageSupport)[]
   /// 额外的错误提示。可以从接口获取，在editor中渲染
   diagnostics?: ExtraDiagnostic
-  /// 额外的props，例如传入样式等
+  /// placeholder
+  placeholder?: string[]
   [key: string]: unknown
 }
 
@@ -118,6 +124,11 @@ function ReactCodemirror(
     editor.current
   )
 
+  const placeholderCompart = usePlaceholderProp(
+    props.placeholder,
+    editor.current
+  )
+
   useDiagnostics(props.diagnostics, editor.current)
   useChangedValue(props.value, editor.current)
 
@@ -130,8 +141,9 @@ function ReactCodemirror(
         themeCompart,
         languageCompart,
         extensionsCompart,
-        VIEW_CHANGE && listenValueChangeAndInvokeCallback(onChange),
         MINIMAP_FLAG && minimap,
+        PLACEHOLDER_FLAG && placeholderCompart,
+        VIEW_CHANGE && listenValueChangeAndInvokeCallback(onChange),
       ].filter(Boolean) as Extension,
     })
 
@@ -146,7 +158,7 @@ function ReactCodemirror(
     <div
       ref={element}
       className="codemirror-editor-body"
-      style={props.styles}
+      style={props.style}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore 接受css属性，兼容 @emotion/react 的属性
       css={props.css}

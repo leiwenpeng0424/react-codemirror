@@ -92,8 +92,8 @@ export const isSameTextAccordingToDoc = (
   return true
 }
 
-export function getStyle(element, attr): string {
-  return window.getComputedStyle
-    ? window.getComputedStyle(element, null)[attr]
-    : element.currentStyle[attr]
+export function getStyle(element: Element, attr: string): string {
+  return (
+    (window?.getComputedStyle(element, null)[attr] as string) ?? ""
+  )
 }

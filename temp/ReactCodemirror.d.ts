@@ -23,6 +23,7 @@ export interface CommonProps {
     editable?: boolean;
     extensions?: (Extension | LanguageSupport)[];
     diagnostics?: ExtraDiagnostic;
+    placeholder?: string[];
     [key: string]: unknown;
 }
 export declare type ReactCodemirrorProps = JavascriptProps | JsonProps | SqlProps;
