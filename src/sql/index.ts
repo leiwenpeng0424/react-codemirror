@@ -1,26 +1,18 @@
 import { LanguageSupport } from "@codemirror/language"
 import { CommonProps } from "../ReactCodemirror"
 import {
-  Cassandra,
-  MSSQL,
-  MariaSQL,
-  MySQL,
-  PLSQL,
-  PostgreSQL,
-  SQLDialect,
-  SQLite,
   StandardSQL,
   keywordCompletion,
   schemaCompletion,
   SQLConfig,
 } from "@codemirror/lang-sql"
-
+import spaceCompletion from "./keymapSpaceCompletionForSQL"
 export interface SqlProps extends CommonProps {
   language: "sql"
   langOptions?: SQLConfig
 }
 
-export default function sql(config: SQLConfig = {}) {
+export default function sql(config: SQLConfig = {}): LanguageSupport {
   const configs = {
     ...config,
   }
@@ -31,22 +23,10 @@ export default function sql(config: SQLConfig = {}) {
 
   const lang = configs.dialect || StandardSQL
   return new LanguageSupport(lang.language, [
+    spaceCompletion(lang),
     schemaCompletion(configs),
     keywordCompletion(lang, !!configs.upperCaseKeywords),
   ])
 }
 
-export {
-  sql,
-  SQLConfig,
-  Cassandra,
-  MSSQL,
-  MariaSQL,
-  MySQL,
-  PLSQL,
-  PostgreSQL,
-  SQLDialect,
-  SQLite,
-  StandardSQL,
-  schemaCompletion,
-}
+export { sql, SQLConfig, StandardSQL, schemaCompletion }

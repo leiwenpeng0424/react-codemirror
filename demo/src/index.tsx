@@ -11,24 +11,63 @@ const App: React.FC<Record<string | number, never>> = () => {
     <ReactCodemirror
       language="sql"
       style={{ height: 500 }}
+      value={`CREATE TABLE MySource(
+  \`user_id\` BIGINT,
+  \`name\` varchar,
+  \`user_region\` TIMESTAMP(3)
+) WITH (
+  type ='kafka',
+  bootstrapServers ='172.17.2.10:9092',
+  offsetReset ='LATEST',
+  groupID='fj-flink-sql',
+  zookeeperQuorum ='172.17.2.10:2181',
+  topic ='fj-flink-out-1',
+  --- topic ='mqTest.*',
+  ---topicIsPattern='true',
+  parallelism = 1
+);
+
+inert into
+`}
       placeholder={[
-        "Example1: SELECT * FROM AAA",
-        "Example2: SELECT * FROM BBB",
-        "Example3: SELECT * FROM CCC",
-        "Example4: SELECT * FROM DDD",
-        "Example5: SELECT * FROM EEE",
-        "Example6: SELECT * FROM FFF",
+        "Placeholder example1: SELECT * FROM AAA",
+        "Placeholder example2: SELECT * FROM BBB",
+        "Placeholder example3: SELECT * FROM CCC",
+        "Placeholder example4: SELECT * FROM DDD",
+        "Placeholder example5: SELECT * FROM EEE",
+        "Placeholder example6: SELECT * FROM FFF",
       ]}
       langOptions={{
+        upperCaseKeywords: true,
         schema: {
-          tableA: [
+          aaa: [
             {
-              label: "column-a",
-              detail: "this is the detail about the column-a",
+              label: "user_id",
+              detail: "this is the user_id about the MySource",
+            },
+            {
+              label: "name",
+              detail: "this is the name about the MySource",
+            },
+            {
+              label: "user_region",
+              detail: "this is the user_region about the MySource",
             },
           ],
-          tableB: ["columnA", "columnB", "columnC", "columnD"],
-          tableC: ["columnA", "columnB", "columnC", "columnD"],
+          bbb: [
+            {
+              label: "user_region",
+              detail: "this is the user_region about the MySource",
+            },
+            {
+              label: "pv",
+              detail: "this is the pv about the MySource",
+            },
+            {
+              label: "uv",
+              detail: "this is the uv about the MySource",
+            },
+          ],
         },
       }}
     />
