@@ -26,8 +26,7 @@ const placeholderPlguin = ViewPlugin.fromClass(
         )
       }
 
-      if (update.docChanged && update.state.doc.length !== 0) {
-        ///
+      if (update.state.doc.length !== 0) {
         this.dom.innerHTML = ""
       }
     }
