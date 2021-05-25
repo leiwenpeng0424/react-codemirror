@@ -2,6 +2,10 @@ import { Diagnostic } from "@codemirror/lint"
 import { EditorView } from "@codemirror/view"
 import { ExtraDiagnostic } from "./customize-props/diagnostics"
 
+function makeLineNumGreaterThanZero(lineNum: number): number {
+  return lineNum <= 0 ? 1 : lineNum
+}
+
 export const translateDiagnostics = (
   input: ExtraDiagnostic = {
     checkResult: { checkItems: [], rawSQL: "" },
@@ -20,21 +24,17 @@ export const translateDiagnostics = (
     const { error, errorCode, lineOffsets } = item
 
     lineOffsets.forEach((lineOffset) => {
-      const {
-        StartLine,
-        EndLine,
-        StartOffset,
-        EndOffset,
-      } = lineOffset
+      const { StartLine, EndLine, StartOffset, EndOffset } =
+        lineOffset
 
       let from: number, to: number
 
       if (maxLines >= EndLine) {
         const { from: startFrom, to: startTo } = view.state.doc.line(
-          StartLine + 1
+          makeLineNumGreaterThanZero(StartLine) + 1
         )
         const { from: endFrom, to: endTo } = view.state.doc.line(
-          EndLine + 1
+          makeLineNumGreaterThanZero(EndLine) + 1
         )
 
         if (startFrom === endFrom && startFrom === endTo) {
