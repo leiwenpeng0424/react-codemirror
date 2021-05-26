@@ -10,7 +10,9 @@ import { SyntaxNode } from "lezer"
 
 function tokenBefore(tree: SyntaxNode) {
   const cursor = tree.cursor.moveTo(tree.from, -1)
-  while (/Comment/.test(cursor.name)) cursor.moveTo(cursor.from, -1)
+  while (/Comment/.test(cursor.name)) {
+    cursor.moveTo(cursor.from, -1)
+  }
   return cursor.node
 }
 
@@ -72,6 +74,11 @@ function sourceContext(
   } else {
     empty = true
   }
+
+  const prevToken = tokenBefore(pos)
+  console.log(prevToken)
+  /// TODO 在这里添加特殊补全的逻辑
+
   return { parent: null, from: startPos, quoted: null, empty }
 }
 
@@ -116,7 +123,16 @@ export function completeFromSchema(
       context.state,
       context.pos
     )
-    if (empty && !context.explicit) return null
+    if (empty && !context.explicit) {
+      /// TODO 如果遇到了前一个TIKEN是 关键字 `into` 或者 `from` 或者 `table`，就展示待选项
+      return {
+        from,
+        to: context.pos,
+        options: maybeQuoteCompletions(quoted, topOptions),
+        span: Span,
+      }
+    }
+
     let options = topOptions
     if (parent) {
       const columns = byTable[parent]

@@ -6,6 +6,7 @@ import {
   SQLConfig,
 } from "@codemirror/lang-sql"
 import { completeFromSchema } from "./folkSchemaCompletion"
+import analysisSql from "./analysis"
 export interface SqlProps extends CommonProps {
   language: "sql"
   langOptions?: SQLConfig
@@ -33,6 +34,7 @@ export default function sql(config: SQLConfig = {}): LanguageSupport {
         })
       : [],
     keywordCompletion(lang, !!configs.upperCaseKeywords),
+    analysisSql(),
   ])
 }
 

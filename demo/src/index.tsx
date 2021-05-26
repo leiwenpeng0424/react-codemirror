@@ -11,11 +11,7 @@ const App: React.FC<Record<string | number, never>> = () => {
     <ReactCodemirror
       language="sql"
       style={{ height: 500 }}
-      value={`CREATE TABLE MySource(
-  \`user_id\` BIGINT,
-  \`name\` varchar,
-  \`user_region\` TIMESTAMP(3)
-) WITH (
+      value={`CREATE TABLE MySource(\`user_id\` BIGINT,\`name\` varchar,\`user_region\` TIMESTAMP(3)) WITH (
   type ='kafka',
   bootstrapServers ='172.17.2.10:9092',
   offsetReset ='LATEST',
@@ -45,7 +41,6 @@ INSERT INTO`}
               label: "user_id",
               detail: "this is the user_id about the MySource",
               info: (completion) => {
-                console.log(completion)
                 const node = document.createElement("div")
 
                 const source = document.createElement("div")
@@ -92,6 +87,34 @@ INSERT INTO`}
             },
           ],
         },
+        tables: [
+          {
+            label: "aaa",
+            property: "property",
+            detail: "this is the user_id about the MySource",
+            info: (completion) => {
+              const node = document.createElement("div")
+
+              const source = document.createElement("div")
+              source.innerHTML = "Data Source: aaa"
+
+              const database = document.createElement("div")
+              database.innerHTML = "Database: bbb"
+
+              const schema = document.createElement("div")
+              schema.innerHTML = "Schema: ccc"
+
+              const table = document.createElement("div")
+              table.innerHTML = "Table: ddd"
+
+              node.appendChild(source)
+              node.appendChild(database)
+              node.appendChild(schema)
+              node.appendChild(table)
+              return node
+            },
+          },
+        ],
       }}
     />
   )
