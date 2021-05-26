@@ -3,13 +3,13 @@ import { CommonProps } from "../ReactCodemirror"
 import {
   StandardSQL,
   keywordCompletion,
-  schemaCompletion,
   SQLConfig,
 } from "@codemirror/lang-sql"
-import spaceCompletion from "./keymapSpaceCompletionForSQL"
+import { completeFromSchema } from "./folkSchemaCompletion"
 export interface SqlProps extends CommonProps {
   language: "sql"
   langOptions?: SQLConfig
+  formatter?: (string) => string | Promise<string>
 }
 
 export default function sql(config: SQLConfig = {}): LanguageSupport {
@@ -23,10 +23,17 @@ export default function sql(config: SQLConfig = {}): LanguageSupport {
 
   const lang = configs.dialect || StandardSQL
   return new LanguageSupport(lang.language, [
-    spaceCompletion(lang),
-    schemaCompletion(configs),
+    config.schema
+      ? (config.dialect || StandardSQL).language.data.of({
+          autocomplete: completeFromSchema(
+            config.schema,
+            config.tables,
+            config.defaultTable
+          ),
+        })
+      : [],
     keywordCompletion(lang, !!configs.upperCaseKeywords),
   ])
 }
 
-export { sql, SQLConfig, StandardSQL, schemaCompletion }
+export { sql, SQLConfig, StandardSQL }

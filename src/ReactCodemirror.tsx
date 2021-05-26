@@ -21,6 +21,8 @@ import {
   MINIMAP_FLAG,
   VIEW_CHANGE,
   PLACEHOLDER_FLAG,
+  KEYMAP_PROMPT,
+  FORMAT,
 } from "./features"
 
 // hooks for customize-props
@@ -35,6 +37,8 @@ import useChangedValue, {
   listenValueChangeAndInvokeCallback,
 } from "./customize-props/value"
 import usePlaceholderProp from "./customize-props/placeholer"
+import keymapPrompt from "./extensions/keymapPrompt/prompt"
+import format from "./extensions/format"
 
 export type IEditor = EditorView
 
@@ -144,6 +148,9 @@ function ReactCodemirror(
         MINIMAP_FLAG && minimap,
         PLACEHOLDER_FLAG && placeholderCompart,
         VIEW_CHANGE && listenValueChangeAndInvokeCallback(onChange),
+        KEYMAP_PROMPT && keymapPrompt({ placement: "leftbottom" }),
+        /// 使用快捷键进行格式化，只针对sql语言
+        FORMAT && format((props as SqlProps).formatter),
       ].filter(Boolean) as Extension,
     })
 

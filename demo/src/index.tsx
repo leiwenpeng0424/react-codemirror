@@ -27,8 +27,7 @@ const App: React.FC<Record<string | number, never>> = () => {
   parallelism = 1
 );
 
-inert into
-`}
+INSERT INTO`}
       placeholder={[
         "Placeholder example1: SELECT * FROM AAA",
         "Placeholder example2: SELECT * FROM BBB",
@@ -37,6 +36,7 @@ inert into
         "Placeholder example5: SELECT * FROM EEE",
         "Placeholder example6: SELECT * FROM FFF",
       ]}
+      formatter={(text: string) => text}
       langOptions={{
         upperCaseKeywords: true,
         schema: {
