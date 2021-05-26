@@ -21,6 +21,7 @@ export const keymapPromptConfig = Facet.define<
   },
 })
 
+/// 设置prompt的文字，展示在编辑器右下角
 export const setPromptText = StateEffect.define<string | null>({
   map: (value) => value ?? "",
 })
@@ -45,7 +46,12 @@ const prompt = ViewPlugin.fromClass(
           const effect = effects[index]
 
           if (effect.is(setPromptText) && effect.value) {
-            this.init()
+            if (this.timer) {
+              this.setupTimer()
+            } else {
+              this.init()
+            }
+
             this.attach(effect.value)
             break
           }
@@ -56,20 +62,6 @@ const prompt = ViewPlugin.fromClass(
     init() {
       const dom = document.createElement("div")
       dom.classList.add("cm-keymap-prompt")
-      dom.setAttribute(
-        "style",
-        `position: absolute;
-         width: 200px;
-         height: 60px;
-         background: black;
-         opacity: 0;
-         bottom: 24px;
-         right: 24px;
-         border-radius: 8px;
-         opacity: 0;
-         transition: opacity 0.2s
-         `
-      )
       dom.addEventListener("transitionend", this.onAninationEnd)
       this.view.scrollDOM.appendChild(dom)
       this.dom = dom
@@ -101,6 +93,8 @@ const prompt = ViewPlugin.fromClass(
         this.onAninationEnd
       )
       this.view.scrollDOM.removeChild(this.dom)
+      clearTimeout(this.timer)
+      this.timer = null
     }
 
     destory() {
@@ -109,8 +103,26 @@ const prompt = ViewPlugin.fromClass(
   }
 )
 
+const propmtBaseTheme = EditorView.baseTheme({
+  ".cm-keymap-prompt": {
+    position: "absolute",
+    width: "auto",
+    height: "60px",
+    background: "black",
+    opacity: 0,
+    bottom: "24px",
+    right: "24px",
+    borderRadius: "8px",
+    transition: "opacity 0.2s",
+    textAlign: "center",
+    lineHeight: "60px",
+    fontSize: "20px",
+    padding: "0 16px",
+  },
+})
+
 export default function keymapPrompt(
   config: KeymapPromptConfig
 ): Extension {
-  return [keymapPromptConfig.of(config), prompt]
+  return [keymapPromptConfig.of(config), prompt, propmtBaseTheme]
 }
