@@ -5,3 +5,4 @@ export const COPY_DOC = false
 export const PLACEHOLDER_FLAG = true
 export const KEYMAP_PROMPT = true
 export const FORMAT = true
+export const TOOLTIP = true

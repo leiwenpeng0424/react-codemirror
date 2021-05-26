@@ -44,6 +44,29 @@ INSERT INTO`}
             {
               label: "user_id",
               detail: "this is the user_id about the MySource",
+              info: (completion) => {
+                console.log(completion)
+                const node = document.createElement("div")
+
+                const source = document.createElement("div")
+                source.innerHTML = "Data Source: aaa"
+
+                const database = document.createElement("div")
+                database.innerHTML = "Database: bbb"
+
+                const schema = document.createElement("div")
+                schema.innerHTML = "Schema: ccc"
+
+                const table = document.createElement("div")
+                table.innerHTML = "Table: ddd"
+
+                node.appendChild(source)
+                node.appendChild(database)
+                node.appendChild(schema)
+                node.appendChild(table)
+
+                return node
+              },
             },
             {
               label: "name",
