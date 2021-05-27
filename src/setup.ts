@@ -3,6 +3,7 @@ import {
   drawSelection,
   highlightActiveLine,
   keymap,
+  EditorView,
 } from "@codemirror/view"
 export { EditorView } from "@codemirror/view"
 import { EditorState } from "@codemirror/state"
@@ -91,6 +92,25 @@ const basicSetup = [
     ...commentKeymap,
     ...completionKeymap,
     ...lintKeymap,
+    {
+      key: "Tab",
+      run: (view: EditorView) => {
+        view.dispatch({
+          changes: [
+            {
+              from: view.state.selection.main.head,
+              insert: " ".repeat(view.state.tabSize),
+            },
+          ],
+          selection: {
+            anchor:
+              view.state.selection.main.head + view.state.tabSize,
+            head: view.state.selection.main.head + view.state.tabSize,
+          },
+        })
+        return true
+      },
+    },
   ]),
 ]
 

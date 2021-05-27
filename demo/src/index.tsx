@@ -11,19 +11,66 @@ const App: React.FC<Record<string | number, never>> = () => {
     <ReactCodemirror
       language="sql"
       style={{ height: 500 }}
-      value={`CREATE TABLE MySource(\`user_id\` BIGINT,\`name\` varchar,\`user_region\` TIMESTAMP(3)) WITH (
-  type ='kafka',
-  bootstrapServers ='172.17.2.10:9092',
-  offsetReset ='LATEST',
-  groupID='fj-flink-sql',
-  zookeeperQuorum ='172.17.2.10:2181',
-  topic ='fj-flink-out-1',
-  --- topic ='mqTest.*',
-  ---topicIsPattern='true',
-  parallelism = 1
-);
-
-INSERT INTO`}
+      value={`CREATE TABLE MySource(
+        user_id BIGINT,
+        name varchar,
+        user_region TIMESTAMP 
+    ) WITH (
+        type ='kafka',
+        bootstrapServers ='172.17.2.10:9092',
+        offsetReset ='LATEST',
+        groupID='fj-flink-sql',
+        zookeeperQuorum ='172.17.2.10:2181',
+        topic ='fj-flink-out-1',
+        --- topic ='mqTest.*',
+        ---topicIsPattern='true',
+        parallelism = 1
+    
+    );
+    
+    CREATE TABLE pageviews (
+      user_region varchar,
+      pv BIGINT,
+      uv BIGINT
+     ) WITH (
+       type ='kafka',
+        bootstrapServers ='172.17.2.10:9092',
+        offsetReset ='LATEST',
+        groupID='fj-flink-sql',
+        zookeeperQuorum ='172.17.2.10:2181',
+       topic ='fj-flink-out-1',
+      --  serialize ='zengjun',
+     --   version ='0.0.1',
+     --   pluginFileType ='jar',
+        --- topic ='mqTest.*',
+        ---topicIsPattern='true',
+        parallelism ='1'
+    );
+    
+    INSERT INTO pageviews
+    SELECT
+      user_region,
+     now(),
+      COUNT(*),
+      COUNT(DISTINCT user_id)
+    FROM pageviews
+    GROUP BY user_region;
+    
+    
+    -- create table function test(
+    
+    -- ) WITH (
+    --     packageName = 'com.test',
+    --     className = 'test',
+    --     ossUrl = 'accessors-smart-1.2.jar',
+    -- );
+    -- create table function func2(
+    
+    -- ) WITH (
+    --     packageName = 'com.rocktrol.dmp',
+    --     className = 'Func2',
+    --     ossUrl = 'empty.jar',
+    -- );`}
       placeholder={[
         "Placeholder example1: SELECT * FROM AAA",
         "Placeholder example2: SELECT * FROM BBB",
@@ -35,86 +82,7 @@ INSERT INTO`}
       formatter={(text: string) => text}
       langOptions={{
         upperCaseKeywords: true,
-        schema: {
-          aaa: [
-            {
-              label: "user_id",
-              detail: "this is the user_id about the MySource",
-              info: (completion) => {
-                const node = document.createElement("div")
-
-                const source = document.createElement("div")
-                source.innerHTML = "Data Source: aaa"
-
-                const database = document.createElement("div")
-                database.innerHTML = "Database: bbb"
-
-                const schema = document.createElement("div")
-                schema.innerHTML = "Schema: ccc"
-
-                const table = document.createElement("div")
-                table.innerHTML = "Table: ddd"
-
-                node.appendChild(source)
-                node.appendChild(database)
-                node.appendChild(schema)
-                node.appendChild(table)
-
-                return node
-              },
-            },
-            {
-              label: "name",
-              detail: "this is the name about the MySource",
-            },
-            {
-              label: "user_region",
-              detail: "this is the user_region about the MySource",
-            },
-          ],
-          bbb: [
-            {
-              label: "user_region",
-              detail: "this is the user_region about the MySource",
-            },
-            {
-              label: "pv",
-              detail: "this is the pv about the MySource",
-            },
-            {
-              label: "uv",
-              detail: "this is the uv about the MySource",
-            },
-          ],
-        },
-        tables: [
-          {
-            label: "aaa",
-            property: "property",
-            detail: "this is the user_id about the MySource",
-            info: (completion) => {
-              const node = document.createElement("div")
-
-              const source = document.createElement("div")
-              source.innerHTML = "Data Source: aaa"
-
-              const database = document.createElement("div")
-              database.innerHTML = "Database: bbb"
-
-              const schema = document.createElement("div")
-              schema.innerHTML = "Schema: ccc"
-
-              const table = document.createElement("div")
-              table.innerHTML = "Table: ddd"
-
-              node.appendChild(source)
-              node.appendChild(database)
-              node.appendChild(schema)
-              node.appendChild(table)
-              return node
-            },
-          },
-        ],
+        schema: [],
       }}
     />
   )
