@@ -7,6 +7,7 @@ import {
 import { EditorState } from "@codemirror/state"
 import { syntaxTree } from "@codemirror/language"
 import { SyntaxNode } from "lezer"
+import { sqlAnalysisField, SqlAnalysis } from "./analysis"
 
 function tokenBefore(tree: SyntaxNode) {
   const cursor = tree.cursor.moveTo(tree.from, -1)
@@ -42,9 +43,7 @@ function sourceContext(
         (before && before.name == "Identifier") ||
         before.name == "QuotedIdentifier"
       )
-        parent = stripQuotes(
-          state.sliceDoc(before.from, before.to).toLowerCase()
-        )
+        parent = stripQuotes(state.sliceDoc(before.from, before.to))
     }
 
     return {
@@ -62,9 +61,7 @@ function sourceContext(
       before.name == "QuotedIdentifier"
     ) {
       return {
-        parent: stripQuotes(
-          state.sliceDoc(before.from, before.to).toLowerCase()
-        ),
+        parent: stripQuotes(state.sliceDoc(before.from, before.to)),
         from: startPos,
         quoted: null,
       }
@@ -74,10 +71,6 @@ function sourceContext(
   } else {
     empty = true
   }
-
-  const prevToken = tokenBefore(pos)
-  console.log(prevToken)
-  /// TODO 在这里添加特殊补全的逻辑
 
   return { parent: null, from: startPos, quoted: null, empty }
 }
@@ -94,6 +87,38 @@ function maybeQuoteCompletions(
   }))
 }
 
+function tranferTableSourceToCompletions(source: SqlAnalysis): {
+  [name: string]: Completion[]
+} {
+  const schema: { [name: string]: Completion[] } = {}
+
+  const tableNames = Object.keys(source)
+
+  tableNames.forEach((name) => {
+    if (!schema[name]) {
+      schema[name] = []
+    }
+
+    for (let index = 0; index < source[name].length; index++) {
+      const item = source[name][index]
+
+      if (Object.keys(item).length === 0) {
+        break
+      }
+
+      schema[name].push({
+        label: item.name,
+        detail: `from ${name}`,
+        info: ``,
+        type: "property",
+        boost: 2,
+      })
+    }
+  })
+
+  return schema
+}
+
 const Span = /^\w*$/,
   QuotedSpan = /^[`'"]?\w*[`'"]?$/
 
@@ -103,7 +128,7 @@ export function completeFromSchema(
   defaultTable?: string
 ): CompletionSource {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const byTable: { [table: string]: readonly Completion[] } =
+  let byTable: { [table: string]: readonly Completion[] } =
     Object.create(null)
   for (const table in schema)
     byTable[table] = schema[table].map((val) => {
@@ -111,7 +136,7 @@ export function completeFromSchema(
         ? { label: val, type: "property" }
         : val
     })
-  const topOptions: readonly Completion[] = (
+  let topOptions: readonly Completion[] = (
     tables ||
     Object.keys(byTable).map(
       (name) => ({ label: name, type: "type" } as Completion)
@@ -119,12 +144,23 @@ export function completeFromSchema(
   ).concat((defaultTable && byTable[defaultTable]) || [])
 
   return (context: CompletionContext) => {
+    const localTableSource = context.state.field(sqlAnalysisField)
+    const localSchema =
+      tranferTableSourceToCompletions(localTableSource)
+
+    byTable = Object.assign({}, byTable, localSchema)
+    topOptions = Object.keys(localTableSource).map(
+      (name) => ({ label: name, type: "type" } as Completion)
+    )
+
     const { parent, from, quoted, empty } = sourceContext(
       context.state,
       context.pos
     )
     if (empty && !context.explicit) {
-      /// TODO 如果遇到了前一个TIKEN是 关键字 `into` 或者 `from` 或者 `table`，就展示待选项
+      /// TODO 如果遇到了前一个 TOKEN 是 关键字 `into` 或者 `from` 或者 `table`，就展示待选项
+      console.log(syntaxTree(context.state).cursor(context.pos, 1))
+
       return {
         from,
         to: context.pos,
@@ -142,6 +178,7 @@ export function completeFromSchema(
     const quoteAfter =
       quoted &&
       context.state.sliceDoc(context.pos, context.pos + 1) == quoted
+
     return {
       from,
       to: quoteAfter ? context.pos + 1 : undefined,
