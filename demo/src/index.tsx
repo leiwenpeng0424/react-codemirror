@@ -82,7 +82,21 @@ const App: React.FC<Record<string | number, never>> = () => {
       formatter={(text: string) => text}
       langOptions={{
         upperCaseKeywords: true,
-        schema: [],
+        schema: {
+          aaa: [
+            {
+              label: "column-a",
+            },
+            {
+              label: "column-b",
+            },
+            {
+              label: "column-c",
+            },
+          ],
+          bbb: [],
+        },
+        tables: [{ label: "aaa", info: "aaa is aaa" }],
       }}
     />
   )
