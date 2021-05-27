@@ -35,13 +35,15 @@ const createbody = (
 
   const bodyHtml = body
     .map((item) => {
-      return `
+      return item.name
+        ? `
       <div class='cm-hover-tooltip-item'>
         <span>${item.name}</span>
         <span style='color: gray;margin-left: 6px;display:inline-block'>${
           stripQuote(item.type)?.toLowerCase() ?? "-"
         }</span>
       </div>`
+        : ""
     })
     .join("")
 
@@ -54,9 +56,7 @@ const hoverField = hoverTooltip(
   (view, pos, side) => {
     const token = tokenAt(syntaxTree(view.state), pos, side)
     const tokenName = view.state.doc.sliceString(token.from, token.to)
-
     const localTableSource = view.state.field(sqlAnalysisField)
-
     const dataSource = localTableSource[tokenName]
     if (!dataSource) {
       return null

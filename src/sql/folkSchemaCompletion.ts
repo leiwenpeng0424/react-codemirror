@@ -8,6 +8,7 @@ import { EditorState } from "@codemirror/state"
 import { syntaxTree } from "@codemirror/language"
 import { SyntaxNode } from "lezer"
 import { sqlAnalysisField, SqlAnalysis } from "./analysis"
+import { EditorView } from "@codemirror/view"
 
 function tokenBefore(tree: SyntaxNode) {
   const cursor = tree.cursor.moveTo(tree.from, -1)
@@ -98,14 +99,11 @@ function tranferTableSourceToCompletions(source: SqlAnalysis): {
     if (!schema[name]) {
       schema[name] = []
     }
-
     for (let index = 0; index < source[name].length; index++) {
       const item = source[name][index]
-
       if (Object.keys(item).length === 0) {
         break
       }
-
       schema[name].push({
         label: item.name,
         detail: `from ${name}`,
@@ -122,6 +120,58 @@ function tranferTableSourceToCompletions(source: SqlAnalysis): {
 const Span = /^\w*$/,
   QuotedSpan = /^[`'"]?\w*[`'"]?$/
 
+let usageStack: { [key: string]: number } = {}
+
+function increseUsageCountApply(
+  view: EditorView,
+  completion: Completion,
+  from: number,
+  to: number
+): void {
+  if (!usageStack[completion.label]) {
+    usageStack[completion.label] = 1
+  } else {
+    usageStack[completion.label]++
+  }
+
+  view.dispatch({
+    changes: [
+      {
+        from,
+        to,
+        insert: completion.label,
+      },
+    ],
+    selection: {
+      anchor: from + completion.label.length,
+      head: from + completion.label.length,
+    },
+  })
+}
+
+function rerangeOptionsByContext(
+  input: readonly Completion[],
+  output: readonly Completion[]
+): Completion[] {
+  const baseBoost = 0
+
+  /// 重置 Usage
+  usageStack = {}
+
+  return [
+    ...input.map((put) => ({
+      ...put,
+      boost: baseBoost + (usageStack[put.label] ?? 0),
+      apply: increseUsageCountApply,
+    })),
+    ...output.map((put) => ({
+      ...put,
+      boost: baseBoost + 1 + (usageStack[put.label] ?? 0),
+      apply: increseUsageCountApply,
+    })),
+  ]
+}
+
 export function completeFromSchema(
   schema: { [table: string]: readonly (string | Completion)[] },
   tables?: readonly Completion[],
@@ -136,7 +186,7 @@ export function completeFromSchema(
         ? { label: val, type: "property" }
         : val
     })
-  let topOptions: readonly Completion[] = (
+  const topOptions: readonly Completion[] = (
     tables ||
     Object.keys(byTable).map(
       (name) => ({ label: name, type: "type" } as Completion)
@@ -147,26 +197,61 @@ export function completeFromSchema(
     const localTableSource = context.state.field(sqlAnalysisField)
     const localSchema =
       tranferTableSourceToCompletions(localTableSource)
-
-    byTable = Object.assign({}, byTable, localSchema)
-    topOptions = Object.keys(localTableSource).map(
+    const localOptions = Object.keys(localTableSource).map(
       (name) => ({ label: name, type: "type" } as Completion)
     )
+
+    byTable = Object.assign({}, byTable, localSchema)
 
     const { parent, from, quoted, empty } = sourceContext(
       context.state,
       context.pos
     )
     if (empty && !context.explicit) {
-      /// TODO 如果遇到了前一个 TOKEN 是 关键字 `into` 或者 `from` 或者 `table`，就展示待选项
-      console.log(syntaxTree(context.state).cursor(context.pos, 1))
-
-      return {
-        from,
-        to: context.pos,
-        options: maybeQuoteCompletions(quoted, topOptions),
-        span: Span,
+      let textFrom = context.pos - 1
+      let textTo = context.pos
+      let textAtPos = context.state.doc.sliceString(textFrom, textTo)
+      while (textTo <= 0 || textAtPos == " ") {
+        textTo = textFrom
+        textFrom -= 1
+        textAtPos = context.state.doc.sliceString(textFrom, textTo)
       }
+
+      const node = syntaxTree(context.state).cursor(textFrom, -1)
+
+      textAtPos = context.state.doc
+        .sliceString(node.from, node.to)
+        .toLowerCase()
+
+      if (from - textFrom <= 1) {
+        return null
+      }
+
+      if (textAtPos === "into") {
+        return {
+          from,
+          to: context.pos,
+          options: maybeQuoteCompletions(
+            quoted,
+            rerangeOptionsByContext(topOptions, localOptions)
+          ),
+          span: Span,
+        }
+      }
+
+      if (textAtPos === "from") {
+        return {
+          from,
+          to: context.pos,
+          options: maybeQuoteCompletions(
+            quoted,
+            rerangeOptionsByContext(localOptions, topOptions)
+          ),
+          span: Span,
+        }
+      }
+
+      return null
     }
 
     let options = topOptions
