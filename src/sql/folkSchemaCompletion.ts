@@ -6,9 +6,13 @@ import {
 } from "@codemirror/autocomplete"
 import { EditorState } from "@codemirror/state"
 import { syntaxTree } from "@codemirror/language"
-import { SyntaxNode } from "lezer"
+import { SyntaxNode, Tree, TreeCursor } from "lezer"
 import { sqlAnalysisField, SqlAnalysis } from "./analysis"
 import { EditorView } from "@codemirror/view"
+import {
+  HitPathCompletion,
+  snippetsFacet,
+} from "../extensions/snippets"
 
 function tokenBefore(tree: SyntaxNode) {
   const cursor = tree.cursor.moveTo(tree.from, -1)
@@ -88,7 +92,34 @@ function maybeQuoteCompletions(
   }))
 }
 
-function tranferTableSourceToCompletions(source: SqlAnalysis): {
+function beforePosToken(
+  state: EditorState,
+  from: number,
+  to: number
+): {
+  from: number
+  to: number
+  text: string
+  cursorFrom: number
+} {
+  let textAtPos = state.doc.sliceString(from, to)
+  while (to <= 0 || textAtPos == " ") {
+    to = from
+    from -= 1
+    textAtPos = state.doc.sliceString(from, to)
+  }
+
+  const node = syntaxTree(state).cursor(from, -1)
+
+  return {
+    text: state.doc.sliceString(node.from, node.to),
+    from: node.from,
+    to: node.to,
+    cursorFrom: from,
+  }
+}
+
+function transferTableSourceToCompletions(source: SqlAnalysis): {
   [name: string]: Completion[]
 } {
   const schema: { [name: string]: Completion[] } = {}
@@ -122,7 +153,7 @@ const Span = /^\w*$/,
 
 let usageStack: { [key: string]: number } = {}
 
-function increseUsageCountApply(
+function increaseUsageCountApply(
   view: EditorView,
   completion: Completion,
   from: number,
@@ -149,7 +180,7 @@ function increseUsageCountApply(
   })
 }
 
-function rerangeOptionsByContext(
+function rearrangeOptionsByContext(
   input: readonly Completion[],
   output: readonly Completion[]
 ): Completion[] {
@@ -162,14 +193,53 @@ function rerangeOptionsByContext(
     ...input.map((put) => ({
       ...put,
       boost: baseBoost + (usageStack[put.label] ?? 0),
-      apply: increseUsageCountApply,
+      apply: increaseUsageCountApply,
     })),
     ...output.map((put) => ({
       ...put,
       boost: baseBoost + 1 + (usageStack[put.label] ?? 0),
-      apply: increseUsageCountApply,
+      apply: increaseUsageCountApply,
     })),
   ]
+}
+
+/// 按照pos往前一个一个地截取字符，直到遇到匹配地补全。
+function tokenBeforePos(
+  state: EditorState,
+  pos: number
+): {
+  node: {
+    from: number
+    to: number
+    value: string
+    cursor: TreeCursor
+  }
+} {
+  let char: string = state.doc.sliceString(pos - 1, pos)
+
+  while (char === " ") {
+    pos--
+    char = state.doc.sliceString(pos - 1, pos)
+  }
+
+  const cursor: TreeCursor = syntaxTree(state).cursor(pos, -1)
+
+  return {
+    node: {
+      value: state.doc.sliceString(cursor.from, cursor.to),
+      from: pos - 1,
+      to: pos,
+      cursor,
+    },
+  }
+}
+
+function getTokenNameByPos(
+  state: EditorState,
+  from: number,
+  to: number
+): string {
+  return state.doc.sliceString(from, to)
 }
 
 export function completeFromSchema(
@@ -194,11 +264,13 @@ export function completeFromSchema(
   ).concat((defaultTable && byTable[defaultTable]) || [])
 
   return (context: CompletionContext) => {
+    /// 补充代码段补全到CompletionResult
+    const snippets = context.state.facet(snippetsFacet)
     const localTableSource = context.state.field(sqlAnalysisField)
     const localSchema =
-      tranferTableSourceToCompletions(localTableSource)
+      transferTableSourceToCompletions(localTableSource)
     const localOptions = Object.keys(localTableSource).map(
-      (name) => ({ label: name, type: "type" } as Completion)
+      (name) => ({ label: name, type: "property" } as Completion)
     )
 
     byTable = Object.assign({}, byTable, localSchema)
@@ -208,53 +280,111 @@ export function completeFromSchema(
       context.pos
     )
     if (empty && !context.explicit) {
-      let textFrom = context.pos - 1
-      let textTo = context.pos
-      let textAtPos = context.state.doc.sliceString(textFrom, textTo)
-      while (textTo <= 0 || textAtPos == " ") {
-        textTo = textFrom
-        textFrom -= 1
-        textAtPos = context.state.doc.sliceString(textFrom, textTo)
+      let targetOptions: HitPathCompletion = snippets
+      let node = tokenBeforePos(context.state, context.pos).node
+
+      while (
+        targetOptions[node.value] &&
+        !Array.isArray(targetOptions[node.value])
+      ) {
+        const char = getTokenNameByPos(
+          context.state,
+          node.cursor.from,
+          node.cursor.to
+        )
+        node = tokenBeforePos(context.state, node.from).node
+        targetOptions = targetOptions[char] as HitPathCompletion
       }
 
-      const node = syntaxTree(context.state).cursor(textFrom, -1)
+      const options = targetOptions[node.value] as Completion[]
 
-      textAtPos = context.state.doc
-        .sliceString(node.from, node.to)
-        .toLowerCase()
+      console.log(options)
 
-      if (from - textFrom <= 1) {
-        return null
-      }
-
-      if (textAtPos === "into") {
-        return {
-          from,
-          to: context.pos,
-          options: maybeQuoteCompletions(
-            quoted,
-            rerangeOptionsByContext(topOptions, localOptions)
-          ),
-          span: Span,
-        }
-      }
-
-      if (textAtPos === "from") {
-        return {
-          from,
-          to: context.pos,
-          options: maybeQuoteCompletions(
-            quoted,
-            rerangeOptionsByContext(localOptions, topOptions)
-          ),
-          span: Span,
-        }
-      }
+      // if (textAtPos === "=") {
+      //   /// get token name at operator-left-side
+      //   textAtPos = context.state.doc.sliceString(
+      //     textFrom - 1,
+      //     textFrom
+      //   )
+      //   while (textTo <= 0 || textAtPos == " ") {
+      //     textTo = textFrom
+      //     textFrom -= 1
+      //     textAtPos = context.state.doc.sliceString(textFrom, textTo)
+      //   }
+      //
+      //   const node = syntaxTree(context.state).cursor(textFrom, -1)
+      //   textAtPos = context.state.doc
+      //     .sliceString(node.from, node.to)
+      //     .toLowerCase()
+      //
+      //   if (textAtPos === "type") {
+      //     return {
+      //       from,
+      //       to: context.pos,
+      //       options: [
+      //         {
+      //           label: "kafka",
+      //           info: "kafka data type",
+      //           apply: `'kafka', \n   bootstrapServers = '',
+      // offsetReset = '',
+      // groupID = '',
+      // zookeeperQuorum = '',
+      // topic = '',
+      // ---topic = 'mqTest.*',
+      // ---topicIsPattern = 'true',
+      // parallelism = 1`,
+      //         },
+      //         {
+      //           label: "PG",
+      //           info: "example completion for create table from type PG",
+      //         },
+      //       ],
+      //       span: Span,
+      //     }
+      //   }
+      //
+      //   return null
+      // }
+      //
+      // const node = syntaxTree(context.state).cursor(textFrom, -1)
+      //
+      // textAtPos = context.state.doc
+      //   .sliceString(node.from, node.to)
+      //   .toLowerCase()
+      //
+      // if (from - textFrom <= 1) {
+      //   return null
+      // }
+      //
+      // if (textAtPos === "into") {
+      //   return {
+      //     from,
+      //     to: context.pos,
+      //     options: maybeQuoteCompletions(
+      //       quoted,
+      //       rearrangeOptionsByContext(topOptions, localOptions)
+      //     ),
+      //     span: Span,
+      //   }
+      // }
+      //
+      // if (textAtPos === "from") {
+      //   return {
+      //     from,
+      //     to: context.pos,
+      //     options: maybeQuoteCompletions(
+      //       quoted,
+      //       rearrangeOptionsByContext(localOptions, topOptions)
+      //     ),
+      //     span: Span,
+      //   }
+      // }
 
       return null
     }
 
     let options = topOptions
+    options = options.concat(snippets[""])
     if (parent) {
       const columns = byTable[parent]
       if (!columns) return null
