@@ -24,6 +24,7 @@ import {
   KEYMAP_PROMPT,
   FORMAT,
   TOOLTIP,
+  SNIPPETS,
 } from "./features"
 
 // hooks for customize-props
@@ -41,6 +42,8 @@ import usePlaceholderProp from "./customize-props/placeholer"
 import keymapPrompt from "./extensions/keymapPrompt/prompt"
 import format from "./extensions/format"
 import { cursorTooltip } from "./extensions/cursorTooltip"
+import { Snippet } from "./extensions/snippets"
+import useSnippetsProp from "./customize-props/snippets"
 
 export type IEditor = EditorView
 
@@ -68,6 +71,10 @@ export interface CommonProps {
   diagnostics?: ExtraDiagnostic
   /// placeholder
   placeholder?: string[]
+  /// 外部提供的格式化方法
+  formatter?: (string) => string | Promise<string>
+  /// snippets 外部提供的代码段补全
+  snippets?: Snippet[]
   [key: string]: unknown
 }
 
@@ -134,6 +141,10 @@ function ReactCodemirror(
     props.placeholder,
     editor.current
   )
+  const snippets = useSnippetsProp(
+    props.snippets || [],
+    editor.current
+  )
 
   useDiagnostics(props.diagnostics, editor.current)
   useChangedValue(props.value, editor.current)
@@ -154,6 +165,7 @@ function ReactCodemirror(
         /// 使用快捷键进行格式化，只针对sql语言
         FORMAT && format((props as SqlProps).formatter),
         TOOLTIP && cursorTooltip(),
+        SNIPPETS && snippets,
       ].filter(Boolean) as Extension,
     })
 

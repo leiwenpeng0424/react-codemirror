@@ -10,7 +10,6 @@ import analysisSql from "./analysis"
 export interface SqlProps extends CommonProps {
   language: "sql"
   langOptions?: SQLConfig
-  formatter?: (string) => string | Promise<string>
 }
 
 export default function sql(config: SQLConfig = {}): LanguageSupport {

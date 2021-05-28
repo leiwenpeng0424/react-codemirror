@@ -8,7 +8,7 @@ const textOfPlaceholder = Facet.define<string[], string[]>({
   },
 })
 
-const placeholderPlguin = ViewPlugin.fromClass(
+const placeholderPlugin = ViewPlugin.fromClass(
   class {
     view: EditorView
     dom: HTMLDivElement
@@ -16,12 +16,12 @@ const placeholderPlguin = ViewPlugin.fromClass(
     constructor(view: EditorView) {
       this.view = view
       this.dom = this.initPlaceholderMask(view)
-      this.updateMaskOverlayer(view.state.facet(textOfPlaceholder))
+      this.updateMaskOverlay(view.state.facet(textOfPlaceholder))
     }
 
     update(update: ViewUpdate) {
       if (update.docChanged && update.state.doc.length === 0) {
-        this.updateMaskOverlayer(
+        this.updateMaskOverlay(
           this.view.state.facet(textOfPlaceholder)
         )
       }
@@ -43,7 +43,7 @@ const placeholderPlguin = ViewPlugin.fromClass(
       return mask
     }
 
-    updateMaskOverlayer(text: string | string[]) {
+    updateMaskOverlay(text: string | string[]) {
       if (typeof text === "string") {
         this.dom.innerText = text
       } else {
@@ -69,11 +69,11 @@ const baseTheme = EditorView.baseTheme({
 })
 
 export default function placeholder(
-  placeholdertext: string[]
+  placeholderText: string[]
 ): Extension {
   return [
-    textOfPlaceholder.of(placeholdertext),
-    placeholderPlguin,
+    textOfPlaceholder.of(placeholderText),
+    placeholderPlugin,
     baseTheme,
   ]
 }
