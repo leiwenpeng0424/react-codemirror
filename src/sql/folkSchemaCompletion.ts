@@ -296,89 +296,57 @@ export function completeFromSchema(
         targetOptions = targetOptions[char] as HitPathCompletion
       }
 
-      const options = targetOptions[node.value] as Completion[]
+      if (context.pos === node.to) {
+        return null
+      }
 
-      console.log(options)
+      const options =
+        (targetOptions[node.value] as Completion[]) ?? []
 
-      // if (textAtPos === "=") {
-      //   /// get token name at operator-left-side
-      //   textAtPos = context.state.doc.sliceString(
-      //     textFrom - 1,
-      //     textFrom
-      //   )
-      //   while (textTo <= 0 || textAtPos == " ") {
-      //     textTo = textFrom
-      //     textFrom -= 1
-      //     textAtPos = context.state.doc.sliceString(textFrom, textTo)
-      //   }
-      //
-      //   const node = syntaxTree(context.state).cursor(textFrom, -1)
-      //   textAtPos = context.state.doc
-      //     .sliceString(node.from, node.to)
-      //     .toLowerCase()
-      //
-      //   if (textAtPos === "type") {
-      //     return {
-      //       from,
-      //       to: context.pos,
-      //       options: [
-      //         {
-      //           label: "kafka",
-      //           info: "kafka data type",
-      //           apply: `'kafka', \n   bootstrapServers = '',
-      // offsetReset = '',
-      // groupID = '',
-      // zookeeperQuorum = '',
-      // topic = '',
-      // ---topic = 'mqTest.*',
-      // ---topicIsPattern = 'true',
-      // parallelism = 1`,
-      //         },
-      //         {
-      //           label: "PG",
-      //           info: "example completion for create table from type PG",
-      //         },
-      //       ],
-      //       span: Span,
-      //     }
-      //   }
-      //
-      //   return null
-      // }
-      //
-      // const node = syntaxTree(context.state).cursor(textFrom, -1)
-      //
-      // textAtPos = context.state.doc
-      //   .sliceString(node.from, node.to)
-      //   .toLowerCase()
-      //
-      // if (from - textFrom <= 1) {
-      //   return null
-      // }
-      //
-      // if (textAtPos === "into") {
-      //   return {
-      //     from,
-      //     to: context.pos,
-      //     options: maybeQuoteCompletions(
-      //       quoted,
-      //       rearrangeOptionsByContext(topOptions, localOptions)
-      //     ),
-      //     span: Span,
-      //   }
-      // }
-      //
-      // if (textAtPos === "from") {
-      //   return {
-      //     from,
-      //     to: context.pos,
-      //     options: maybeQuoteCompletions(
-      //       quoted,
-      //       rearrangeOptionsByContext(localOptions, topOptions)
-      //     ),
-      //     span: Span,
-      //   }
-      // }
+      //// 匹配到 to 就展示输出源的 table 名称
+      if (node.value.toLowerCase() === "into") {
+        return {
+          from,
+          to: context.pos,
+          options: maybeQuoteCompletions(
+            quoted,
+            rearrangeOptionsByContext(
+              [...options, ...topOptions],
+              localOptions
+            )
+          ),
+          span: Span,
+        }
+      }
+
+      //// 匹配到 from 就展示输入源的 table 名称
+      if (node.value.toLowerCase() === "from") {
+        return {
+          from,
+          to: context.pos,
+          options: maybeQuoteCompletions(
+            quoted,
+            rearrangeOptionsByContext(localOptions, [
+              ...options,
+              ...topOptions,
+            ])
+          ),
+          span: Span,
+        }
+      }
+
+      //// 最后有匹配到所有的键，就给出匹配到的补全
+      if (options.length) {
+        return {
+          from,
+          to: context.pos,
+          options: maybeQuoteCompletions(
+            quoted,
+            rearrangeOptionsByContext(options, [])
+          ),
+          span: Span,
+        }
+      }
 
       return null
     }

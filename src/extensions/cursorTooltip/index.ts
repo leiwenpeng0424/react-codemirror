@@ -4,6 +4,27 @@ import { hoverTooltip } from "@codemirror/tooltip"
 import { Extension } from "@codemirror/state"
 import { EditorView } from "@codemirror/view"
 import { sqlAnalysisField } from "../../sql/analysis"
+import functions from "../../funcs"
+
+const funcs: { [key: string]: string } = {}
+
+const transformToKeyValue = (
+  funcsMap: {
+    title: string
+    label: string
+    data: { key: string; value: string }[]
+  }[]
+) => {
+  //// add func
+  funcsMap.forEach((funcsCategory) => {
+    funcsCategory.data.forEach((item) => {
+      const key = /([A-z]+)/.exec(item.key)[0]
+      if (key) {
+        funcs[key.toLowerCase()] = item.value
+      }
+    })
+  })
+}
 
 const stripQuote = (str: string): string =>
   /^[`'"](.*)[`'"]$/.exec(str)?.[1] ?? str
@@ -52,13 +73,18 @@ const createbody = (
   return b
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+transformToKeyValue(functions)
+
 const hoverField = hoverTooltip(
   (view, pos, side) => {
     const token = tokenAt(syntaxTree(view.state), pos, side)
     const tokenName = view.state.doc.sliceString(token.from, token.to)
     const localTableSource = view.state.field(sqlAnalysisField)
     const dataSource = localTableSource[tokenName]
-    if (!dataSource) {
+    const funcsDescription = funcs[tokenName.toLowerCase()]
+    if (!dataSource && !funcsDescription) {
       return null
     }
 
@@ -67,16 +93,27 @@ const hoverField = hoverTooltip(
       above: true,
       strictSide: false,
       class: "cm-cursor-tooltip",
-      create: (view: EditorView) => {
-        const localTableSource = view.state.field(sqlAnalysisField)
-
-        if (localTableSource[tokenName]) {
+      create: () => {
+        if (dataSource) {
           const dom = document.createElement("div")
-          const tableSource = localTableSource[tokenName]
           const head = createHead(tokenName)
-          const body = createbody(tableSource)
+          const body = createbody(dataSource)
           dom.appendChild(head)
           dom.appendChild(body)
+          return {
+            dom,
+          }
+        }
+
+        if (funcsDescription) {
+          const dom = document.createElement("div")
+          const head = createHead(tokenName)
+          const body = document.createElement("div")
+          body.innerText = funcsDescription
+
+          dom.appendChild(head)
+          dom.appendChild(body)
+
           return {
             dom,
           }
