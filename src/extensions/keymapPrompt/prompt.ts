@@ -63,7 +63,7 @@ const prompt = ViewPlugin.fromClass(
       const dom = document.createElement("div")
       dom.classList.add("cm-keymap-prompt")
       dom.addEventListener("transitionend", this.onAninationEnd)
-      this.view.scrollDOM.appendChild(dom)
+      this.view.dom.appendChild(dom)
       this.dom = dom
 
       this.setupTimer()
@@ -92,7 +92,7 @@ const prompt = ViewPlugin.fromClass(
         "transitionend",
         this.onAninationEnd
       )
-      this.view.scrollDOM.removeChild(this.dom)
+      this.view.dom.removeChild(this.dom)
       clearTimeout(this.timer)
       this.timer = null
     }

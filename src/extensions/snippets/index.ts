@@ -29,11 +29,35 @@ function transferSnippetToCompletion(
 
     if (snip.hit) {
       //
+
+      const hitKeywords = snip.hit.split("-").reverse()
+
+      let tempMap: HitPathCompletion
+
+      if (!snippetsResult[hitKeywords[0]]) {
+        tempMap = snippetsResult[hitKeywords[0]] = {}
+      } else {
+        tempMap = snippetsResult[hitKeywords[0]]
+      }
+
+      hitKeywords.slice(1).forEach((keyword, index) => {
+        if (!tempMap[keyword]) {
+          tempMap[keyword] = []
+        }
+        if (index === hitKeywords.length - 2) {
+          // eslint-disable-next-line @typescript-eslint/no-extra-semi
+          ;(tempMap[keyword] as Completion[]).push(snippetConfig)
+        } else {
+          tempMap = tempMap[keyword] = {}
+        }
+      })
     } else {
       // eslint-disable-next-line @typescript-eslint/no-extra-semi
       ;(<Completion[]>snippetsResult[""]).push(snippetConfig)
     }
   })
+
+  console.log(snippetsResult)
 
   return snippetsResult
 }

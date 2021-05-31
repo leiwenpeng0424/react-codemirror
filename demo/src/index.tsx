@@ -125,6 +125,12 @@ GROUP BY user_region;
           template: "gp",
           hit: "type-=",
         },
+        {
+          label: "gql",
+          info: "gql",
+          template: "gqll",
+          hit: "type-=",
+        },
       ]}
     />
   )
