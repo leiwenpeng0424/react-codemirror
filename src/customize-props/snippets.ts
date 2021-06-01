@@ -16,9 +16,7 @@ export default function useSnippetsProp(
   useEffect(() => {
     view?.dispatch({
       effects: [
-        snippetsCompart.reconfigure(
-          snippetsCompart.of(snippetsFacet.of(extraSnippets))
-        ),
+        snippetsCompart.reconfigure(snippetsFacet.of(extraSnippets)),
       ],
     })
   }, [extraSnippets, view])

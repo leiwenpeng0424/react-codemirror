@@ -23,10 +23,13 @@ export default function () {
       extensions={[]} // 拓展方法
       extraCompletions={[]} // 已废弃
       onChange={(t: string) => t} // 在editable是true的情况下，会在每次编辑器内容变化的时候执行
-      defaultValue={"asd"} // 初始值
-      value={"asd"} // 与editable关联，如果editable为false，则编辑器会接受value的值作为内容展示
+      value={"sql sentance"} // 与editable关联，如果editable为false，则编辑器会接受value的值作为内容展示
       language="" // 内容格式，javascript/json/sql
       langOptions={} // 传递给语言拓展方法的初始参数
+      formatter={(str) => string | Promise<string>} // 格式化方法
+      diagnostics={} // 语法错误描述
+      placeholder={string[]} // 编辑器的placeholder，支持多行
+      snippets={[]} // 代码段补全
     />
   )
 }

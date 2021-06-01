@@ -76,10 +76,7 @@ const basicSetup = [
   defaultHighlightStyle.fallback,
   bracketMatching(),
   closeBrackets(),
-  autocompletion({
-    activateOnTyping: true,
-    // override
-  }),
+  autocompletion(),
   rectangularSelection(),
   highlightActiveLine(),
   highlightSelectionMatches(),

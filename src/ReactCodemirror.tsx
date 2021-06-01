@@ -4,7 +4,12 @@
 import { basicSetup, EditorState, EditorView } from "./setup"
 import { Extension } from "@codemirror/state"
 import { LanguageSupport } from "@codemirror/language"
-import React, { forwardRef, useImperativeHandle, useRef } from "react"
+import React, {
+  forwardRef,
+  ForwardRefRenderFunction,
+  useImperativeHandle,
+  useRef,
+} from "react"
 import { useMount, useUnmount } from "./hooks/lifecycle"
 
 // language
@@ -72,7 +77,7 @@ export interface CommonProps {
   /// placeholder
   placeholder?: string[]
   /// 外部提供的格式化方法
-  formatter?: (string) => string | Promise<string>
+  formatter?: (string: string) => string | Promise<string>
   /// snippets 外部提供的代码段补全
   snippets?: Snippet[]
   [key: string]: unknown
@@ -96,17 +101,15 @@ interface StaticCodemirrorProps extends CommonProps {
   langOptions: ReactCodemirrorProps["langOptions"]
 }
 
-function ReactCodemirror(
-  props: ReactCodemirrorProps | StaticCodemirrorProps,
-  ref: React.MutableRefObject<ReactCodemirrorRefValues>
-) {
+const ReactCodemirror: ForwardRefRenderFunction<
+  ReactCodemirrorRefValues,
+  ReactCodemirrorProps & StaticCodemirrorProps
+> = (props, ref) => {
   const { onChange } = props
   const element = useRef<HTMLDivElement>()
   const editor = useRef<EditorView>()
 
   useImperativeHandle(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     ref,
     () => ({
       format(configs: FormatConfig) {

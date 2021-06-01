@@ -82,45 +82,45 @@ GROUP BY user_region;
           aaa: [],
         },
       }}
-      // snippets={[
-      //   {
-      //     label: "TUMBLE",
-      //     info: "TUMBLE",
-      //     template:
-      //       "TUMBLE(${1:proctime}, ${2:interval} '${3:count}' ${4:unit})",
-      //   },
-      //   {
-      //     label: "TUMBLE_START",
-      //     info: "TUMBLE_START",
-      //     template:
-      //       "TUMBLE_START(${1:proctime}, ${2:interval} '${3:count}' ${4:unit})",
-      //   },
-      //   {
-      //     label: "TUMBLE_END",
-      //     info: "TUMBLE_END",
-      //     template:
-      //       "TUMBLE_END(${1:proctime}, ${2:interval} '${3:count}' ${4:unit})",
-      //   },
-      //   {
-      //     label: "kafka",
-      //     info: "kafka",
-      //     template:
-      //       "'kafka',\nbootstrapServers = '',\noffsetReset = '',\ngroupID = '',\nzookeeperQuorum = '',\ntopic = '',\nparallelism = ",
-      //     hit: "type-=",
-      //   },
-      //   {
-      //     label: "gp",
-      //     info: "gp",
-      //     template: "gp",
-      //     hit: "type-=",
-      //   },
-      //   {
-      //     label: "gql",
-      //     info: "gql",
-      //     template: "gqll",
-      //     hit: "type-=",
-      //   },
-      // ]}
+      snippets={[
+        {
+          label: "TUMBLE",
+          info: "TUMBLE",
+          template:
+            "TUMBLE(${1:proctime}, ${2:interval} '${3:count}' ${4:unit})",
+        },
+        {
+          label: "TUMBLE_START",
+          info: "TUMBLE_START",
+          template:
+            "TUMBLE_START(${1:proctime}, ${2:interval} '${3:count}' ${4:unit})",
+        },
+        {
+          label: "TUMBLE_END",
+          info: "TUMBLE_END",
+          template:
+            "TUMBLE_END(${1:proctime}, ${2:interval} '${3:count}' ${4:unit})",
+        },
+        {
+          label: "kafka",
+          info: "kafka",
+          template:
+            "'kafka',\nbootstrapServers = '',\noffsetReset = '',\ngroupID = '',\nzookeeperQuorum = '',\ntopic = '',\nparallelism = ",
+          hit: "type-=",
+        },
+        {
+          label: "gp",
+          info: "gp",
+          template: "gp",
+          hit: "type-=",
+        },
+        {
+          label: "gql",
+          info: "gql",
+          template: "gqll",
+          hit: "type-=",
+        },
+      ]}
     />
   )
 }

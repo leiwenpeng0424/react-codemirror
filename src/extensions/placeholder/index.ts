@@ -12,21 +12,33 @@ const placeholderPlugin = ViewPlugin.fromClass(
   class {
     view: EditorView
     dom: HTMLDivElement
+    placeholder: string | string[] | undefined
 
     constructor(view: EditorView) {
       this.view = view
+
+      this.placeholder = view.state.facet(textOfPlaceholder)
+
+      if (!this.placeholder) {
+        return
+      }
+
       this.dom = this.initPlaceholderMask(view)
-      this.updateMaskOverlay(view.state.facet(textOfPlaceholder))
+      this.updateMaskOverlay(this.placeholder)
     }
 
     update(update: ViewUpdate) {
       if (update.docChanged && update.state.doc.length === 0) {
+        if (!this.placeholder) {
+          return
+        }
+
         this.updateMaskOverlay(
           this.view.state.facet(textOfPlaceholder)
         )
       }
 
-      if (update.state.doc.length !== 0) {
+      if (update.state.doc.length !== 0 && this.dom) {
         this.dom.innerHTML = ""
       }
     }
