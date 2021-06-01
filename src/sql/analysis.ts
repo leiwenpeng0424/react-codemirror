@@ -129,7 +129,7 @@ function analysis(state: EditorState): SqlAnalysis {
         activeTableKeyType = null
       }
     },
-    Keyword(node, from, to) {
+    Keyword(_node, from, to) {
       const tokenName = state.doc.sliceString(from, to)
 
       if (tokenName.toLowerCase() === "with") {
