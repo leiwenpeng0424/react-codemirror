@@ -31,6 +31,14 @@ const placeholderPlugin = ViewPlugin.fromClass(
       }
     }
 
+    focus() {
+      this.view.contentDOM.focus()
+    }
+
+    bindClickEvent(dom: HTMLElement) {
+      dom.addEventListener("click", this.focus.bind(this))
+    }
+
     destory() {
       this.view.dom.removeChild(this.dom)
     }
@@ -39,7 +47,7 @@ const placeholderPlugin = ViewPlugin.fromClass(
       const mask = document.createElement("div")
       mask.classList.add("cm-placeholder-mask")
       view.scrollDOM.appendChild(mask)
-
+      this.bindClickEvent(mask)
       return mask
     }
 
@@ -49,7 +57,7 @@ const placeholderPlugin = ViewPlugin.fromClass(
       } else {
         this.dom.innerHTML = text
           .map((str) => {
-            return `<div class="cm-line">${str}</div>`
+            return `<div class="cm-line" style="cursor: text" >${str}</div>`
           })
           .join("")
       }
