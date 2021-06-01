@@ -57,8 +57,6 @@ function transferSnippetToCompletion(
     }
   })
 
-  console.log(snippetsResult)
-
   return snippetsResult
 }
 

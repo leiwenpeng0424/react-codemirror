@@ -6,7 +6,7 @@ import {
 } from "@codemirror/autocomplete"
 import { EditorState } from "@codemirror/state"
 import { syntaxTree } from "@codemirror/language"
-import { SyntaxNode, Tree, TreeCursor } from "lezer"
+import { SyntaxNode, TreeCursor } from "lezer"
 import { sqlAnalysisField, SqlAnalysis } from "./analysis"
 import { EditorView } from "@codemirror/view"
 import {
@@ -92,40 +92,11 @@ function maybeQuoteCompletions(
   }))
 }
 
-function beforePosToken(
-  state: EditorState,
-  from: number,
-  to: number
-): {
-  from: number
-  to: number
-  text: string
-  cursorFrom: number
-} {
-  let textAtPos = state.doc.sliceString(from, to)
-  while (to <= 0 || textAtPos == " ") {
-    to = from
-    from -= 1
-    textAtPos = state.doc.sliceString(from, to)
-  }
-
-  const node = syntaxTree(state).cursor(from, -1)
-
-  return {
-    text: state.doc.sliceString(node.from, node.to),
-    from: node.from,
-    to: node.to,
-    cursorFrom: from,
-  }
-}
-
 function transferTableSourceToCompletions(source: SqlAnalysis): {
   [name: string]: Completion[]
 } {
   const schema: { [name: string]: Completion[] } = {}
-
   const tableNames = Object.keys(source)
-
   tableNames.forEach((name) => {
     if (!schema[name]) {
       schema[name] = []
@@ -151,7 +122,7 @@ function transferTableSourceToCompletions(source: SqlAnalysis): {
 const Span = /^\w*$/,
   QuotedSpan = /^[`'"]?\w*[`'"]?$/
 
-let usageStack: { [key: string]: number } = {}
+const usageStack: { [key: string]: number } = {}
 
 function increaseUsageCountApply(
   view: EditorView,
@@ -187,23 +158,23 @@ function rearrangeOptionsByContext(
   const baseBoost = 0
 
   /// 重置 Usage
-  usageStack = {}
+  // usageStack = {}
 
   return [
-    ...input.map((put) => ({
+    ...input.map((put, index) => ({
       ...put,
-      boost: baseBoost + (usageStack[put.label] ?? 0),
+      boost: baseBoost - index + (usageStack[put.label] ?? 0),
       apply: increaseUsageCountApply,
     })),
-    ...output.map((put) => ({
+    ...output.map((put, index) => ({
       ...put,
-      boost: baseBoost + 1 + (usageStack[put.label] ?? 0),
+      boost: baseBoost + index + 1 + (usageStack[put.label] ?? 0),
       apply: increaseUsageCountApply,
     })),
   ]
 }
 
-/// 按照pos往前一个一个地截取字符，直到遇到匹配地补全。
+/// 按照pos往前一个一个地截取字符，直到遇到匹配的补全。
 function tokenBeforePos(
   state: EditorState,
   pos: number
@@ -308,13 +279,13 @@ export function completeFromSchema(
         return {
           from,
           to: context.pos,
-          options: maybeQuoteCompletions(
-            quoted,
-            rearrangeOptionsByContext(
-              [...options, ...topOptions],
+          options: maybeQuoteCompletions(quoted, [
+            ...options,
+            ...rearrangeOptionsByContext(
+              [...topOptions],
               localOptions
-            )
-          ),
+            ),
+          ]),
           span: Span,
         }
       }
@@ -324,13 +295,12 @@ export function completeFromSchema(
         return {
           from,
           to: context.pos,
-          options: maybeQuoteCompletions(
-            quoted,
-            rearrangeOptionsByContext(localOptions, [
-              ...options,
+          options: maybeQuoteCompletions(quoted, [
+            ...options,
+            ...rearrangeOptionsByContext(localOptions, [
               ...topOptions,
-            ])
-          ),
+            ]),
+          ]),
           span: Span,
         }
       }
@@ -340,10 +310,7 @@ export function completeFromSchema(
         return {
           from,
           to: context.pos,
-          options: maybeQuoteCompletions(
-            quoted,
-            rearrangeOptionsByContext(options, [])
-          ),
+          options: maybeQuoteCompletions(quoted, options),
           span: Span,
         }
       }
