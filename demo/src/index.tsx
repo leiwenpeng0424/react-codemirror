@@ -82,6 +82,7 @@ GROUP BY user_region;
           aaa: [
             {
               label: "column-a",
+              info: "column-a in aaa",
             },
             {
               label: "column-b",
@@ -116,7 +117,8 @@ GROUP BY user_region;
         {
           label: "kafka",
           info: "kafka",
-          template: "kafka",
+          template:
+            "'kafka',\nbootstrapServers = '',\noffsetReset = '',\ngroupID = '',\nzookeeperQuorum = '',\ntopic = '',\nparallelism = ",
           hit: "type-=",
         },
         {

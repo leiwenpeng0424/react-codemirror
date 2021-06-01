@@ -6,7 +6,9 @@ import { EditorView } from "@codemirror/view"
 import { sqlAnalysisField } from "../../sql/analysis"
 import functions from "../../funcs"
 
-const funcs: { [key: string]: string } = {}
+const funcs: {
+  [key: string]: { key: string; rawKey: string; value: string }
+} = {}
 
 const transformToKeyValue = (
   funcsMap: {
@@ -20,7 +22,11 @@ const transformToKeyValue = (
     funcsCategory.data.forEach((item) => {
       const key = /([A-z]+)/.exec(item.key)[0]
       if (key) {
-        funcs[key.toLowerCase()] = item.value
+        funcs[key.toLowerCase()] = {
+          value: item.value,
+          rawKey: item.key,
+          key: key,
+        }
       }
     })
   })
@@ -107,9 +113,12 @@ const hoverField = hoverTooltip(
 
         if (funcsDescription) {
           const dom = document.createElement("div")
-          const head = createHead(tokenName)
+          const head = createHead(`${funcsDescription.key}`)
           const body = document.createElement("div")
-          body.innerText = funcsDescription
+          body.innerText = funcsDescription.value
+          // +
+          // "\nexample:\n" +
+          // funcsDescription.rawKey
 
           dom.appendChild(head)
           dom.appendChild(body)
