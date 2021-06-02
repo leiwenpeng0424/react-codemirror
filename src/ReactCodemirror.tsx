@@ -76,8 +76,6 @@ export interface CommonProps {
   diagnostics?: ExtraDiagnostic
   /// placeholder
   placeholder?: string[]
-  /// 外部提供的格式化方法
-  formatter?: (string: string) => string | Promise<string>
   /// snippets 外部提供的代码段补全
   snippets?: Snippet[]
   [key: string]: unknown
@@ -154,7 +152,7 @@ const ReactCodemirror: ForwardRefRenderFunction<
 
   useMount(() => {
     const state: EditorState = EditorState.create({
-      doc: props.defaultValue || props.value || "", // 同时接受defaultValue和value做为初始值
+      doc: props.defaultValue || props.value || "", // 同时接受 defaultValue 和 value 做为初始值
       extensions: [
         basicSetup,
         editCompart,
@@ -166,7 +164,7 @@ const ReactCodemirror: ForwardRefRenderFunction<
         VIEW_CHANGE && listenValueChangeAndInvokeCallback(onChange),
         KEYMAP_PROMPT && keymapPrompt({ placement: "leftbottom" }),
         /// 使用快捷键进行格式化，只针对sql语言
-        FORMAT && format((props as SqlProps).formatter),
+        FORMAT && format(),
         TOOLTIP && cursorTooltip(),
         SNIPPETS && snippets,
       ].filter(Boolean) as Extension,
@@ -177,6 +175,7 @@ const ReactCodemirror: ForwardRefRenderFunction<
       parent: element.current,
     })
   })
+
   useUnmount(() => editor.current.destroy())
 
   return (

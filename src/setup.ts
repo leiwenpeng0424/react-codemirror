@@ -9,7 +9,7 @@ export { EditorView } from "@codemirror/view"
 import { EditorState } from "@codemirror/state"
 export { EditorState, Compartment } from "@codemirror/state"
 import { history, historyKeymap } from "@codemirror/history"
-import { foldGutter, foldKeymap } from "@codemirror/fold"
+import { foldGutter, foldKeymap, codeFolding } from "@codemirror/fold"
 import { indentOnInput } from "@codemirror/language"
 import { lineNumbers } from "@codemirror/gutter"
 import { defaultKeymap } from "@codemirror/commands"
@@ -69,6 +69,7 @@ const basicSetup = [
   lineNumbers(),
   highlightSpecialChars(),
   history(),
+  codeFolding({}),
   foldGutter(),
   drawSelection(),
   EditorState.allowMultipleSelections.of(true),

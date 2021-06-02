@@ -1,3 +1,4 @@
+import { logException } from "@codemirror/view"
 import * as React from "react"
 import * as ReactDOM from "react-dom"
 import { ReactCodemirror } from "../../dist"
@@ -75,12 +76,27 @@ GROUP BY user_region;
         "Placeholder example5: SELECT * FROM EEE",
         "Placeholder example6: SELECT * FROM FFF",
       ]}
-      formatter={(text: string) => text}
       langOptions={{
         upperCaseKeywords: true,
         schema: {
-          aaa: [],
+          "ai-process-zzytest": [],
         },
+        tables: [
+          {
+            label: "ai-process-zzytest",
+            info: () => {
+              const dom = document.createElement("div")
+              const body = document.createElement("div")
+              body.innerHTML = `
+                <div><span>sourceName: </span><span>AI-kafka-test</span></div>
+                <div><span>sourceType: </span><span>KAFKA</span></div>
+                <div><span>id: </span><span>1397850326601564162</span></div>
+              `
+              dom.appendChild(body)
+              return dom
+            },
+          },
+        ],
       }}
       snippets={[
         {
