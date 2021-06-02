@@ -27,7 +27,6 @@ import {
   VIEW_CHANGE,
   PLACEHOLDER_FLAG,
   KEYMAP_PROMPT,
-  FORMAT,
   TOOLTIP,
   SNIPPETS,
 } from "./features"
@@ -45,7 +44,6 @@ import useChangedValue, {
 } from "./customize-props/value"
 import usePlaceholderProp from "./customize-props/placeholer"
 import keymapPrompt from "./extensions/keymapPrompt/prompt"
-import format from "./extensions/format"
 import { cursorTooltip } from "./extensions/cursorTooltip"
 import { Snippet } from "./extensions/snippets"
 import useSnippetsProp from "./customize-props/snippets"
@@ -164,7 +162,6 @@ const ReactCodemirror: ForwardRefRenderFunction<
         VIEW_CHANGE && listenValueChangeAndInvokeCallback(onChange),
         KEYMAP_PROMPT && keymapPrompt({ placement: "leftbottom" }),
         /// 使用快捷键进行格式化，只针对sql语言
-        FORMAT && format(),
         TOOLTIP && cursorTooltip(),
         SNIPPETS && snippets,
       ].filter(Boolean) as Extension,

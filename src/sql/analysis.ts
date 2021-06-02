@@ -161,25 +161,6 @@ export const sqlAnalysisField = StateField.define<SqlAnalysis>({
   },
 })
 
-// 分析sql存在的问题，将检查到的错误更新到页面上，
-// gutter marker 还是 Diagnostic ？
-// const SqlAnalysisPlugin = ViewPlugin.fromClass(
-//   class {
-//     errors: []
-//     warnings: []
-//     constructor() {
-//       //
-//     }
-//     update() {
-//       //
-//     }
-//     destory() {
-//       //
-//     }
-//   },
-//   {}
-// )
-
 export default function analysisSql(): Extension {
   let timer = null
   return [
