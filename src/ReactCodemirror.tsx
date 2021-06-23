@@ -56,8 +56,6 @@ export interface CommonProps {
   value?: string
   /// 编辑器初始化使用的值
   defaultValue?: string
-  /// editor内容修改触发该方法
-  onChange?: (value: unknown) => void
   /// 针对当前输入添加额外的补全候选
   /**
    * @deprecated
@@ -83,8 +81,15 @@ export interface CommonProps {
   // 编辑器滚动在顶部的回调函数
   onScrollToTop?: () => void
 
+  // onChange event
+  onChange?: (val: string) => void
+
   // className
   className?: string
+
+  language?: ReactCodemirrorProps["language"]
+
+  langOptions?: ReactCodemirrorProps["langOptions"]
 
   [key: string]: unknown
 }
@@ -107,17 +112,9 @@ export type ReactCodemirrorRefValues = {
   format(configs: FormatConfig): void
 }
 
-interface StaticCodemirrorProps extends CommonProps {
-  editable?: false
-  onChange?: never
-  defaultValue?: never
-  language?: ReactCodemirrorProps["language"]
-  langOptions?: ReactCodemirrorProps["langOptions"]
-}
-
 const ReactCodemirror: ForwardRefRenderFunction<
   ReactCodemirrorRefValues,
-  ReactCodemirrorProps & StaticCodemirrorProps
+  ReactCodemirrorProps & CommonProps
 > = (props, ref) => {
   const { onChange } = props
   const element = useRef<HTMLDivElement>()
