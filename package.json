@@ -39,6 +39,7 @@
     "@codemirror/history": "^0.18.0",
     "@codemirror/lang-javascript": "^0.18.0",
     "@codemirror/lang-json": "^0.18.0",
+    "@codemirror/lang-python": "^0.18.0",
     "@codemirror/lang-sql": "^0.18.0",
     "@codemirror/language": "^0.18.0",
     "@codemirror/lint": "^0.18.0",
