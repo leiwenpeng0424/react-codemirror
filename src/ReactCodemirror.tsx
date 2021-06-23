@@ -20,6 +20,7 @@ import { SqlProps } from "./sql"
 // extensions
 import minimap from "./extensions/minimap"
 import { startFormat, FormatConfig } from "./format"
+import { scrollToEdge } from "./extensions/scrollToEdge"
 
 // feature flags
 import {
@@ -76,6 +77,12 @@ export interface CommonProps {
   placeholder?: string[]
   /// snippets 外部提供的代码段补全
   snippets?: Snippet[]
+
+  // 编辑器滚动在底部的回调函数
+  onScrollToBottom?: () => void
+  // 编辑器滚动在顶部的回调函数
+  onScrollToTop?: () => void
+
   [key: string]: unknown
 }
 
@@ -157,13 +164,21 @@ const ReactCodemirror: ForwardRefRenderFunction<
         themeCompart,
         languageCompart,
         extensionsCompart,
+        scrollToEdge({
+          onScrollToBottom() {
+            props?.onScrollToBottom?.()
+          },
+          onScrollToTop() {
+            props?.onScrollToTop?.()
+          },
+        }),
         MINIMAP_FLAG && minimap,
         PLACEHOLDER_FLAG && placeholderCompart,
         VIEW_CHANGE && listenValueChangeAndInvokeCallback(onChange),
         KEYMAP_PROMPT && keymapPrompt({ placement: "leftbottom" }),
         /// 使用快捷键进行格式化，只针对sql语言
-        TOOLTIP && cursorTooltip(),
-        SNIPPETS && snippets,
+        TOOLTIP && props.language === "sql" && cursorTooltip(),
+        SNIPPETS && props.language === "sql" && snippets,
       ].filter(Boolean) as Extension,
     })
 

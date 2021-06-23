@@ -11,13 +11,15 @@ import { dequal } from "dequal"
 import javascript, { JavascriptProps } from "../javascript"
 import json from "../json"
 import sql, { SqlProps } from "../sql"
-import python, { PythonProps } from "../python"
+import python from "../python"
+import { log } from "../log"
 
 const LANGUAGES = {
   javascript,
   sql,
   json,
   python,
+  log,
 }
 
 const languageCompart: Compartment = new Compartment()
