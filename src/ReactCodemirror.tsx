@@ -90,6 +90,14 @@ export type ReactCodemirrorProps =
   | JavascriptProps
   | JsonProps
   | SqlProps
+  | {
+      language: "python" // add python
+      langOptions: never
+    }
+  | {
+      language: "log" // add log
+      langOptions: never
+    }
 
 export type ReactCodemirrorRefValues = {
   readonly editor?: EditorView

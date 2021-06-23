@@ -27,9 +27,6 @@ const languageCompart: Compartment = new Compartment()
 export type LangOptions =
   | JavascriptProps["langOptions"]
   | SqlProps["langOptions"]
-  | {
-      language: "python"
-    }
 
 function reconfigure(
   language: keyof typeof LANGUAGES,
