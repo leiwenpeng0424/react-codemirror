@@ -20,7 +20,10 @@ import { SqlProps } from "./sql"
 // extensions
 import minimap from "./extensions/minimap"
 import { startFormat, FormatConfig } from "./format"
-import { scrollToEdge } from "./extensions/scrollToEdge"
+import {
+  scrollOptions,
+  scrollToEdge,
+} from "./extensions/scrollToEdge"
 
 // feature flags
 import {
@@ -48,6 +51,7 @@ import keymapPrompt from "./extensions/keymapPrompt/prompt"
 import { cursorTooltip } from "./extensions/cursorTooltip"
 import { Snippet } from "./extensions/snippets"
 import useSnippetsProp from "./customize-props/snippets"
+import { lineNumbers } from "@codemirror/gutter"
 
 export type IEditor = EditorView
 
@@ -90,6 +94,11 @@ export interface CommonProps {
   language?: ReactCodemirrorProps["language"]
 
   langOptions?: ReactCodemirrorProps["langOptions"]
+
+  scrollOptions?: {
+    topOffset?: number
+    bottomOffset?: number
+  }
 
   [key: string]: unknown
 }
@@ -180,6 +189,10 @@ const ReactCodemirror: ForwardRefRenderFunction<
             props?.onScrollToTop?.()
           },
         }),
+        scrollOptions.of(props.scrollOptions ?? {}),
+        props.language !== "log" && lineNumbers(),
+
+        /// features
         MINIMAP_FLAG && minimap,
         PLACEHOLDER_FLAG && placeholderCompart,
         VIEW_CHANGE && listenValueChangeAndInvokeCallback(onChange),

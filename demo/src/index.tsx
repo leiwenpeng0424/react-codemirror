@@ -37,20 +37,12 @@ const text = `
 2021-06-23 00:17:02 - Loading configuration property: blob.server.port, 6125
 2021-06-23 00:17:02 - Loading configuration property: jobmanager.heap.size, 102400k
 2021-06-23 00:17:02 - Loading configuration property: jobmanager.rpc.port, 6123
-2021-06-23 00:17:02 - Loading configuration property: jobmanager.web.port, 8081`
+2021-06-23 00:17:02 - Loading configuration property: jobmanager.web.port, 8081
+`
 
 const App: React.FC<Record<string | number, never>> = () => {
   const ref = React.useRef<ReactCodemirrorRefValues>()
   const [t, setT] = React.useState(text)
-
-  React.useEffect(() => {
-    setTimeout(() => {
-      //
-      ref.current.format({
-        parser: (t) => "13123",
-      })
-    }, 5000)
-  }, [ref])
 
   return (
     <ReactCodemirror
@@ -58,14 +50,15 @@ const App: React.FC<Record<string | number, never>> = () => {
       value={t}
       language="log"
       style={{ height: 500, fontSize: 14 }}
-      // onScrollToTop={() => {
-      //   window.alert("top top")
-      // }}
-      // onScrollToBottom={() => {
-      //   setT((t) => {
-      //     return t + text
-      //   })
-      // }}
+      scrollOptions={{
+        topOffset: 80,
+        bottomOffset: 80,
+      }}
+      onScrollToBottom={() => {
+        console.count("time")
+
+        setT((t) => t + t)
+      }}
     />
   )
 }
