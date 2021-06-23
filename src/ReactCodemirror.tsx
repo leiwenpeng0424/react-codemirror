@@ -83,6 +83,9 @@ export interface CommonProps {
   // 编辑器滚动在顶部的回调函数
   onScrollToTop?: () => void
 
+  // className
+  className?: string
+
   [key: string]: unknown
 }
 
@@ -92,11 +95,11 @@ export type ReactCodemirrorProps =
   | SqlProps
   | {
       language: "python" // add python
-      langOptions: never
+      langOptions?: never
     }
   | {
       language: "log" // add log
-      langOptions: never
+      langOptions?: never
     }
 
 export type ReactCodemirrorRefValues = {
@@ -105,11 +108,11 @@ export type ReactCodemirrorRefValues = {
 }
 
 interface StaticCodemirrorProps extends CommonProps {
-  editable: false
-  onChange: never
-  defaultValue: never
-  language: ReactCodemirrorProps["language"]
-  langOptions: ReactCodemirrorProps["langOptions"]
+  editable?: false
+  onChange?: never
+  defaultValue?: never
+  language?: ReactCodemirrorProps["language"]
+  langOptions?: ReactCodemirrorProps["langOptions"]
 }
 
 const ReactCodemirror: ForwardRefRenderFunction<
@@ -201,7 +204,7 @@ const ReactCodemirror: ForwardRefRenderFunction<
   return (
     <div
       ref={element}
-      className="codemirror-editor-body"
+      className={`codemirror-editor-body ${props.className ?? ""}`}
       style={props.style}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore 接受css属性，兼容 @emotion/react 的属性

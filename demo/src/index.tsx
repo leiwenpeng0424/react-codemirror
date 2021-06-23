@@ -1,7 +1,7 @@
 import { logException } from "@codemirror/view"
 import * as React from "react"
 import * as ReactDOM from "react-dom"
-import { ReactCodemirror } from "../../dist"
+import { ReactCodemirror, ReactCodemirrorRefValues } from "../../dist"
 
 // `class`, `constant`, `enum`,
 // `function`, `interface`, `keyword`, `method`,
@@ -40,18 +40,32 @@ const text = `
 2021-06-23 00:17:02 - Loading configuration property: jobmanager.web.port, 8081`
 
 const App: React.FC<Record<string | number, never>> = () => {
+  const ref = React.useRef<ReactCodemirrorRefValues>()
   const [t, setT] = React.useState(text)
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      //
+      ref.current.format({
+        parser: (t) => "13123",
+      })
+    }, 5000)
+  }, [ref])
 
   return (
     <ReactCodemirror
+      ref={ref}
       value={t}
       language="log"
       style={{ height: 500, fontSize: 14 }}
-      onScrollToBottom={() => {
-        setT((t) => {
-          return t + text
-        })
-      }}
+      // onScrollToTop={() => {
+      //   window.alert("top top")
+      // }}
+      // onScrollToBottom={() => {
+      //   setT((t) => {
+      //     return t + text
+      //   })
+      // }}
     />
   )
 }

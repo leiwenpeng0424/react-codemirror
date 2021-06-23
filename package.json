@@ -1,6 +1,6 @@
 {
   "name": "react-tools-codemirror",
-  "version": "0.1.18",
+  "version": "0.1.21",
   "type": "module",
   "description": "CodeMirror wrapper",
   "main": "./src/index.ts",
@@ -8,6 +8,7 @@
     "node": "./dist/index.cjs",
     "default": "./dist/index.js"
   },
+  "typings": "./dist/index.d.ts",
   "repository": "https://github.com/leiwenpeng0424/react-codemirror.git",
   "author": {
     "name": "leiwenpeng",
@@ -18,7 +19,6 @@
   "scripts": {
     "dev": "toolkit dev",
     "build": "toolkit build",
-    "publish": "toolkit publish",
     "preview": "toolkit preview"
   },
   "eslintConfig": {
