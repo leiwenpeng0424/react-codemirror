@@ -988,4 +988,71 @@ export default [
       },
     ],
   },
+  {
+    title: "Flink SQL Functions",
+    label: ["Flink SQL Functions", "Description"],
+    data: [
+      {
+        key: "TUMBLE(time_attr, interval)",
+        value:
+          "定义翻滚时间窗口，在GROUP BY语句中使用。滚动时间窗口将行分配给具有固定持续时间 ( interval) 的非重叠、连续窗口。例如，一个 5 分钟的滚动窗口以 5 分钟的间隔对行进行分组。",
+      },
+      {
+        key: "TUMBLE_START(time_attr, interval)",
+        value: "返回滚动窗口的开始时间戳",
+      },
+      {
+        key: "TUMBLE_END(time_attr, interval)",
+        value: "返回滚动窗口的开始时间戳",
+      },
+      {
+        key: "HOP(time_attr, interval, interval)",
+        value:
+          "定义一个跳跃时间窗口（在 Table API 中称为滑动窗口），在GROUP BY语句中使用。跳跃时间窗口具有固定的持续时间（第二个interval参数），并按指定的跳跃间隔（第一个interval参数）跳跃。如果跳跃间隔小于窗口大小，则跳跃窗口重叠。因此，可以将行分配给多个窗口。例如，15 分钟大小和 5 分钟跳跃间隔的跳跃窗口将每一行分配给 3 个不同的 15 分钟大小的窗口，这些窗口在 5 分钟的间隔内进行评估。",
+      },
+      {
+        key: "HOP_START(time_attr, interval, interval)",
+        value: "返回跳跃窗口的开始时间戳",
+      },
+      {
+        key: "SESSION(time_attr, interval)",
+        value:
+          "定义会话时间窗口，在GROUP BY语句中使用。会话时间窗口没有固定的持续时间，但它们的界限由interval不活动的时间定义，即，如果在定义的间隙期间没有事件出现，则会话窗口关闭。例如，当在 30 分钟不活动后观察到一行时，会有 30 分钟间隔的会话窗口开始（否则该行将被添加到现有窗口中），如果在 30 分钟内没有添加行，则关闭。",
+      },
+      {
+        key: "SESSION_START(time_attr, interval, interval)",
+        value: "返回会话窗口的开始时间戳",
+      },
+      {
+        key: "TUMBLE_PROCTIME(time_attr, interval, interval)",
+        value:
+          "返回一个翻滚窗口对应的proctime 属性，该属性可用于后续基于时间的操作，例如间隔连接和组窗口或窗口聚合",
+      },
+      {
+        key: "HOP_PROCTIME(time_attr, interval, interval)",
+        value:
+          "返回一个跳跃窗口的proctime 属性，该属性可用于后续基于时间的操作，例如间隔连接和组窗口或窗口聚合",
+      },
+      {
+        key: "SESSION_PROCTIME(time_attr, interval)",
+        value:
+          "返回一个会话窗口的proctime 属性，该属性可用于后续基于时间的操作，例如间隔连接和组窗口或窗口聚合",
+      },
+      {
+        key: "TUMBLE_ROWTIME(time_attr, interval)",
+        value:
+          "返回一个翻滚窗口的rowtime 属性，可用于后续基于时间的操作，例如间隔连接和组窗口或窗口聚合",
+      },
+      {
+        key: "HOP_ROWTIME(time_attr, interval, interval)",
+        value:
+          "返回一个跳跃窗口的rowtime 属性，可用于后续基于时间的操作，例如间隔连接和组窗口或窗口聚合",
+      },
+      {
+        key: "SESSION_ROWTIME(time_attr, interval)",
+        value:
+          "返回一个会话窗口的rowtime 属性，可用于后续基于时间的操作，例如间隔连接和组窗口或窗口聚合",
+      },
+    ],
+  },
 ]
