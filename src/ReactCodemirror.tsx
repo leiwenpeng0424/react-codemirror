@@ -49,7 +49,6 @@ import { Snippet } from "./extensions/snippets"
 import useSnippetsProp from "./customize-props/snippets"
 
 export type IEditor = EditorView
-
 export interface CommonProps {
   /// 通过value可以修改editor内部的值
   value?: string

@@ -1,4 +1,3 @@
-import { logException } from "@codemirror/view"
 import * as React from "react"
 import * as ReactDOM from "react-dom"
 import { ReactCodemirror } from "../../dist"
@@ -11,7 +10,7 @@ const App: React.FC<Record<string | number, never>> = () => {
   return (
     <ReactCodemirror
       language="sql"
-      style={{ height: 500 }}
+      style={{ height: 800 }}
       value={`CREATE TABLE MySource(
     user_id BIGINT,
     name varchar,

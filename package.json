@@ -19,7 +19,8 @@
     "dev": "toolkit dev",
     "build": "toolkit build",
     "publish": "toolkit publish",
-    "preview": "toolkit preview"
+    "preview": "toolkit preview",
+    "test": "toolkit runTests"
   },
   "eslintConfig": {
     "extends": "@initializer/eslint-config",
@@ -49,8 +50,7 @@
     "@codemirror/theme-one-dark": "^0.18.0",
     "@codemirror/view": "^0.18.0",
     "dequal": "^2.0.2",
-    "lodash": "^4.17.21",
-    "sql-formatter": "^4.0.2"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@initializer/buildhelper": "^0.0.8",
