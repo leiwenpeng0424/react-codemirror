@@ -66,7 +66,6 @@ import { lintKeymap } from "@codemirror/lint"
 /// an array literal), copy it into your own code, and adjust it as
 /// desired.
 const basicSetup = [
-  lineNumbers(),
   highlightSpecialChars(),
   history(),
   codeFolding({}),

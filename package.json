@@ -1,6 +1,6 @@
 {
   "name": "react-tools-codemirror",
-  "version": "0.1.18",
+  "version": "0.1.24",
   "type": "module",
   "description": "CodeMirror wrapper",
   "main": "./src/index.ts",
@@ -8,6 +8,7 @@
     "node": "./dist/index.cjs",
     "default": "./dist/index.js"
   },
+  "typings": "./dist/index.d.ts",
   "repository": "https://github.com/leiwenpeng0424/react-codemirror.git",
   "author": {
     "name": "leiwenpeng",
@@ -18,9 +19,7 @@
   "scripts": {
     "dev": "toolkit dev",
     "build": "toolkit build",
-    "publish": "toolkit publish",
-    "preview": "toolkit preview",
-    "test": "toolkit runTests"
+    "preview": "toolkit preview"
   },
   "eslintConfig": {
     "extends": "@initializer/eslint-config",
@@ -40,6 +39,7 @@
     "@codemirror/history": "^0.18.0",
     "@codemirror/lang-javascript": "^0.18.0",
     "@codemirror/lang-json": "^0.18.0",
+    "@codemirror/lang-python": "^0.18.0",
     "@codemirror/lang-sql": "^0.18.0",
     "@codemirror/language": "^0.18.0",
     "@codemirror/lint": "^0.18.0",

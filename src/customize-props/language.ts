@@ -11,11 +11,15 @@ import { dequal } from "dequal"
 import javascript, { JavascriptProps } from "../javascript"
 import json from "../json"
 import sql, { SqlProps } from "../sql"
+import python from "../python"
+import { log } from "../log"
 
 const LANGUAGES = {
   javascript,
   sql,
   json,
+  python,
+  log,
 }
 
 const languageCompart: Compartment = new Compartment()
@@ -28,6 +32,10 @@ function reconfigure(
   language: keyof typeof LANGUAGES,
   langOptions: LangOptions
 ): StateEffect<unknown> {
+  if (!LANGUAGES[language]) {
+    return undefined
+  }
+
   return languageCompart.reconfigure(
     LANGUAGES[language](
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -49,16 +57,20 @@ export default function useLanguageProp(
     language,
     langOptions,
   })
-  const [compart] = useState<Extension>(() =>
-    languageCompart.of(
-      LANGUAGES[language](
+  const [compart] = useState<Extension>(() => {
+    if (!LANGUAGES[language]) {
+      return undefined
+    }
+
+    return languageCompart.of(
+      LANGUAGES[language]?.(
         /// 有些language方法并不需要参数，所以这里会有TS的一场类型错误
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         langOptions
       )
     )
-  )
+  })
 
   useEffect(() => {
     if (

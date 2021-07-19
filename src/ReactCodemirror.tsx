@@ -20,6 +20,10 @@ import { SqlProps } from "./sql"
 // extensions
 import minimap from "./extensions/minimap"
 import { startFormat, FormatConfig } from "./format"
+import {
+  scrollOptions,
+  scrollToEdge,
+} from "./extensions/scrollToEdge"
 
 // feature flags
 import {
@@ -47,6 +51,7 @@ import keymapPrompt from "./extensions/keymapPrompt/prompt"
 import { cursorTooltip } from "./extensions/cursorTooltip"
 import { Snippet } from "./extensions/snippets"
 import useSnippetsProp from "./customize-props/snippets"
+import { lineNumbers } from "@codemirror/gutter"
 
 export type IEditor = EditorView
 export interface CommonProps {
@@ -54,8 +59,6 @@ export interface CommonProps {
   value?: string
   /// 编辑器初始化使用的值
   defaultValue?: string
-  /// editor内容修改触发该方法
-  onChange?: (value: unknown) => void
   /// 针对当前输入添加额外的补全候选
   /**
    * @deprecated
@@ -75,6 +78,27 @@ export interface CommonProps {
   placeholder?: string[]
   /// snippets 外部提供的代码段补全
   snippets?: Snippet[]
+
+  // 编辑器滚动在底部的回调函数
+  onScrollToBottom?: () => void
+  // 编辑器滚动在顶部的回调函数
+  onScrollToTop?: () => void
+
+  // onChange event
+  onChange?: (val: string) => void
+
+  // className
+  className?: string
+
+  language?: ReactCodemirrorProps["language"]
+
+  langOptions?: ReactCodemirrorProps["langOptions"]
+
+  scrollOptions?: {
+    topOffset?: number
+    bottomOffset?: number
+  }
+
   [key: string]: unknown
 }
 
@@ -82,23 +106,23 @@ export type ReactCodemirrorProps =
   | JavascriptProps
   | JsonProps
   | SqlProps
+  | {
+      language: "python" // add python
+      langOptions?: never
+    }
+  | {
+      language: "log" // add log
+      langOptions?: never
+    }
 
 export type ReactCodemirrorRefValues = {
   readonly editor?: EditorView
   format(configs: FormatConfig): void
 }
 
-interface StaticCodemirrorProps extends CommonProps {
-  editable: false
-  onChange: never
-  defaultValue: never
-  language: ReactCodemirrorProps["language"]
-  langOptions: ReactCodemirrorProps["langOptions"]
-}
-
 const ReactCodemirror: ForwardRefRenderFunction<
   ReactCodemirrorRefValues,
-  ReactCodemirrorProps & StaticCodemirrorProps
+  ReactCodemirrorProps & CommonProps
 > = (props, ref) => {
   const { onChange } = props
   const element = useRef<HTMLDivElement>()
@@ -156,13 +180,25 @@ const ReactCodemirror: ForwardRefRenderFunction<
         themeCompart,
         languageCompart,
         extensionsCompart,
+        scrollToEdge({
+          onScrollToBottom() {
+            props?.onScrollToBottom?.()
+          },
+          onScrollToTop() {
+            props?.onScrollToTop?.()
+          },
+        }),
+        scrollOptions.of(props.scrollOptions ?? {}),
+        props.language !== "log" && lineNumbers(),
+
+        /// features
         MINIMAP_FLAG && minimap,
         PLACEHOLDER_FLAG && placeholderCompart,
         VIEW_CHANGE && listenValueChangeAndInvokeCallback(onChange),
         KEYMAP_PROMPT && keymapPrompt({ placement: "leftbottom" }),
         /// 使用快捷键进行格式化，只针对sql语言
-        TOOLTIP && cursorTooltip(),
-        SNIPPETS && snippets,
+        TOOLTIP && props.language === "sql" && cursorTooltip(),
+        SNIPPETS && props.language === "sql" && snippets,
       ].filter(Boolean) as Extension,
     })
 
@@ -177,7 +213,7 @@ const ReactCodemirror: ForwardRefRenderFunction<
   return (
     <div
       ref={element}
-      className="codemirror-editor-body"
+      className={`codemirror-editor-body ${props.className ?? ""}`}
       style={props.style}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore 接受css属性，兼容 @emotion/react 的属性
